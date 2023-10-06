@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"distributed-kv-db/server/db"
+	"distributed-kv-db/serverside/db"
 	"github.com/urfave/cli/v2"
 )
 
@@ -38,7 +38,6 @@ func New(runDb db.Func) []*cli.Command {
 					peerAddresses = cCtx.StringSlice(peerAddressesFlagName)
 				)
 				return runDb(dbPort, peeringPort, advertisedIp, peerAddresses)
-
 			},
 		},
 	}

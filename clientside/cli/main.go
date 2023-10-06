@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"distributed-kv-db/client/repl"
+	"distributed-kv-db/clientside/repl"
 	"github.com/urfave/cli/v2"
 )
 

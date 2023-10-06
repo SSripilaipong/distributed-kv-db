@@ -1,14 +1,14 @@
 package main
 
 import (
-	"distributed-kv-db/appcli"
-	"distributed-kv-db/client"
-	"distributed-kv-db/server"
+	"distributed-kv-db/clientside"
+	"distributed-kv-db/cmd"
+	"distributed-kv-db/serverside"
 	"os"
 )
 
 func main() {
-	run := appcli.New(server.NewCli(), client.NewCli())
+	run := cmd.New(serverside.NewCli(), clientside.NewCli())
 
 	if err := run(os.Args); err != nil {
 		panic(err)
