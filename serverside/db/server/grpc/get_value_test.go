@@ -5,6 +5,8 @@ import (
 	"distributed-kv-db/common/result"
 	"distributed-kv-db/serverside/db/coordinator"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"testing"
 )
 
@@ -27,7 +29,18 @@ func Test_get_value(t *testing.T) {
 			}))),
 		)
 
-		assert.Equal(t, "123", response.Value)
+		assert.Equal(t, "123", response.GetValue())
 		assert.NoError(t, err)
+	})
+
+	t.Run("should return not found error", func(t *testing.T) {
+		response, err := runServerAndGetValueWithResponse(
+			newWithGetValueFunc(getValueWithResponse(
+				result.Error[coordinator.GetValueResponse](coordinator.NewKeyNotFoundError("aaa")),
+			)),
+		)
+
+		assert.Nil(t, response)
+		assert.Equal(t, status.Error(codes.NotFound, "key \"aaa\" not found"), err)
 	})
 }
