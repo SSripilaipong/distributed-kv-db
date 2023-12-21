@@ -1,6 +1,9 @@
 package coordinator
 
-import "distributed-kv-db/common/result"
+import (
+	"context"
+	"distributed-kv-db/common/result"
+)
 
 type GetValueRequest struct {
 	Key string
@@ -17,6 +20,6 @@ type SetValueRequest struct {
 
 type SetValueResponse struct{}
 
-type GetValueFunc func(request GetValueRequest) result.Of[GetValueResponse]
+type GetValueFunc func(ctx context.Context, request GetValueRequest) result.Of[GetValueResponse]
 
-type SetValueFunc func(request SetValueRequest) result.Of[SetValueResponse]
+type SetValueFunc func(ctx context.Context, request SetValueRequest) result.Of[SetValueResponse]

@@ -14,12 +14,13 @@ type grpcImpl struct {
 	setValue coordinator.SetValueFunc
 }
 
-func (t grpcImpl) GetValue(context.Context, *grpc.GetValueRequest) (*grpc.GetValueResponse, error) {
+func (t grpcImpl) GetValue(ctx context.Context, req *grpc.GetValueRequest) (*grpc.GetValueResponse, error) {
+	t.getValue(ctx, coordinator.GetValueRequest{Key: req.Key})
 	return nil, nil
 }
 
-func (t grpcImpl) SetValue(_ context.Context, req *grpc.SetValueRequest) (*grpc.SetValueResponse, error) {
-	resp := t.setValue(coordinator.SetValueRequest{
+func (t grpcImpl) SetValue(ctx context.Context, req *grpc.SetValueRequest) (*grpc.SetValueResponse, error) {
+	resp := t.setValue(ctx, coordinator.SetValueRequest{
 		Key:   req.Key,
 		Value: req.Value,
 	})
