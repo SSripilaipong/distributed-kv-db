@@ -31,7 +31,7 @@ func Test_set_value(t *testing.T) {
 
 	t.Run("should return response", func(t *testing.T) {
 		response, err := runServerAndSetValueWithResponse(
-			newWithSetValueFunc(setValueWithReturn(result.Value(coordinator.SetValueResponse{}))),
+			newWithSetValueFunc(setValueWithResponse(result.Value(coordinator.SetValueResponse{}))),
 		)
 
 		assert.NotNil(t, response) // currently no properties so just check not nil
@@ -40,7 +40,7 @@ func Test_set_value(t *testing.T) {
 
 	t.Run("should return unknown error", func(t *testing.T) {
 		response, err := runServerAndSetValueWithResponse(
-			newWithSetValueFunc(setValueWithReturn(result.Error[coordinator.SetValueResponse](errors.New("boom")))),
+			newWithSetValueFunc(setValueWithResponse(result.Error[coordinator.SetValueResponse](errors.New("boom")))),
 		)
 
 		assert.Nil(t, response)

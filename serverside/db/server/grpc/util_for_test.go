@@ -16,7 +16,7 @@ func setValueCaptureRequest(request *coordinator.SetValueRequest) coordinator.Se
 	}
 }
 
-func setValueWithReturn(response result.Of[coordinator.SetValueResponse]) coordinator.SetValueFunc {
+func setValueWithResponse(response result.Of[coordinator.SetValueResponse]) coordinator.SetValueFunc {
 	return func(ctx context.Context, r coordinator.SetValueRequest) result.Of[coordinator.SetValueResponse] {
 		return response
 	}
@@ -26,6 +26,12 @@ func getValueCaptureRequest(request *coordinator.GetValueRequest) coordinator.Ge
 	return func(ctx context.Context, r coordinator.GetValueRequest) result.Of[coordinator.GetValueResponse] {
 		*request = r
 		return result.Value(coordinator.GetValueResponse{})
+	}
+}
+
+func getValueWithResponse(response result.Of[coordinator.GetValueResponse]) coordinator.GetValueFunc {
+	return func(ctx context.Context, r coordinator.GetValueRequest) result.Of[coordinator.GetValueResponse] {
+		return response
 	}
 }
 
@@ -40,6 +46,13 @@ func runServerAndSetValueWithRequest(runner Func, request *grpc.SetValueRequest)
 	runServerAndExecuteClient(runner, func(client grpc.ServerClient) {
 		_, _ = client.SetValue(context.Background(), request)
 	})
+}
+
+func runServerAndGetValueWithResponse(runner Func) (resp *grpc.GetValueResponse, err error) {
+	runServerAndExecuteClient(runner, func(client grpc.ServerClient) {
+		resp, err = client.GetValue(context.Background(), &grpc.GetValueRequest{})
+	})
+	return
 }
 
 func runServerAndGetValueWithRequest(runner Func, request *grpc.GetValueRequest) {

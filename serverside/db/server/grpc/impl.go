@@ -15,8 +15,8 @@ type grpcImpl struct {
 }
 
 func (t grpcImpl) GetValue(ctx context.Context, req *grpc.GetValueRequest) (*grpc.GetValueResponse, error) {
-	t.getValue(ctx, coordinator.GetValueRequest{Key: req.Key})
-	return nil, nil
+	resp := t.getValue(ctx, coordinator.GetValueRequest{Key: req.Key})
+	return &grpc.GetValueResponse{Value: resp.Value().Value}, nil
 }
 
 func (t grpcImpl) SetValue(ctx context.Context, req *grpc.SetValueRequest) (*grpc.SetValueResponse, error) {
