@@ -20,7 +20,7 @@ func Test_get_value(t *testing.T) {
 			&grpc.GetValueRequest{Key: "abc"},
 		)
 
-		assert.Equal(t, coordinator.GetValueRequest{Key: "abc"}, receivedRequest)
+		assert.Equal(t, "abc", receivedRequest.Key())
 	})
 
 	t.Run("should return response", func(t *testing.T) {

@@ -23,10 +23,8 @@ func Test_set_value(t *testing.T) {
 			},
 		)
 
-		assert.Equal(t, coordinator.SetValueRequest{
-			Key:   "abc",
-			Value: "123",
-		}, receivedRequest)
+		assert.Equal(t, "abc", receivedRequest.Key())
+		assert.Equal(t, "123", receivedRequest.Value())
 	})
 
 	t.Run("should return response", func(t *testing.T) {
