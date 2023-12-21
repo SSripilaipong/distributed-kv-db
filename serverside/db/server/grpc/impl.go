@@ -25,7 +25,7 @@ func (t grpcImpl) GetValue(ctx context.Context, req *grpc.GetValueRequest) (*grp
 		fmt.Println(resp.Error().Error())
 		return nil, status.Error(codes.NotFound, resp.Error().Error())
 	}
-	return nil, nil
+	return nil, status.Error(codes.Unknown, resp.Error().Error())
 }
 
 func (t grpcImpl) SetValue(ctx context.Context, req *grpc.SetValueRequest) (*grpc.SetValueResponse, error) {

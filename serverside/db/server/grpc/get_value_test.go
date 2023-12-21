@@ -4,6 +4,7 @@ import (
 	"distributed-kv-db/api/grpc"
 	"distributed-kv-db/common/result"
 	"distributed-kv-db/serverside/db/coordinator"
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -42,5 +43,16 @@ func Test_get_value(t *testing.T) {
 
 		assert.Nil(t, response)
 		assert.Equal(t, status.Error(codes.NotFound, "key \"aaa\" not found"), err)
+	})
+
+	t.Run("should return unknown error", func(t *testing.T) {
+		response, err := runServerAndGetValueWithResponse(
+			newWithGetValueFunc(getValueWithResponse(
+				result.Error[coordinator.GetValueResponse](errors.New("boom")),
+			)),
+		)
+
+		assert.Nil(t, response)
+		assert.Equal(t, status.Error(codes.Unknown, "boom"), err)
 	})
 }
