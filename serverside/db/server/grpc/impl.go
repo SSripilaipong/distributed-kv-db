@@ -21,5 +21,5 @@ func (t grpcImpl) SetValue(_ context.Context, req *grpc.SetValueRequest) (*grpc.
 		Key:   req.Key,
 		Value: req.Value,
 	})
-	return nil, nil
+	return &grpc.SetValueResponse{}, nil
 }

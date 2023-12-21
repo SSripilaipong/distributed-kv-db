@@ -7,7 +7,6 @@ import (
 	"distributed-kv-db/common/grpcutil"
 	"distributed-kv-db/common/result"
 	"distributed-kv-db/serverside/db/coordinator"
-	"errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -17,7 +16,7 @@ func Test_set_value(t *testing.T) {
 		var receivedRequest coordinator.SetValueRequest
 		grpcRunner := New(nil, setValueCaptureRequest(&receivedRequest))
 
-		_, _ = runServerAndSetValue(grpcRunner, &grpc.SetValueRequest{
+		runServerAndSetValueWithRequest(grpcRunner, &grpc.SetValueRequest{
 			Key:   "abc",
 			Value: "123",
 		})
@@ -27,20 +26,41 @@ func Test_set_value(t *testing.T) {
 			Value: "123",
 		}, receivedRequest)
 	})
+
+	t.Run("should return response", func(t *testing.T) {
+		grpcRunner := New(nil, setValueWithReturn(result.Value(coordinator.SetValueResponse{})))
+
+		response, err := runServerAndSetValueWithResponse(grpcRunner)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, response) // currently no properties so just check not nil
+	})
 }
 
 func setValueCaptureRequest(request *coordinator.SetValueRequest) coordinator.SetValueFunc {
 	return func(r coordinator.SetValueRequest) result.Of[coordinator.SetValueResponse] {
 		*request = r
-		return result.Error[coordinator.SetValueResponse](errors.New("stop server"))
+		return result.Value(coordinator.SetValueResponse{})
 	}
 }
 
-func runServerAndSetValue(runner Func, request *grpc.SetValueRequest) (resp *grpc.SetValueResponse, err error) {
+func setValueWithReturn(response result.Of[coordinator.SetValueResponse]) coordinator.SetValueFunc {
+	return func(r coordinator.SetValueRequest) result.Of[coordinator.SetValueResponse] {
+		return response
+	}
+}
+
+func runServerAndSetValueWithResponse(runner Func) (resp *grpc.SetValueResponse, err error) {
 	runServerAndExecuteClient(runner, func(client grpc.ServerClient) {
-		resp, err = client.SetValue(context.Background(), request)
+		resp, err = client.SetValue(context.Background(), &grpc.SetValueRequest{})
 	})
 	return
+}
+
+func runServerAndSetValueWithRequest(runner Func, request *grpc.SetValueRequest) {
+	runServerAndExecuteClient(runner, func(client grpc.ServerClient) {
+		_, _ = client.SetValue(context.Background(), request)
+	})
 }
 
 func runServerAndExecuteClient(grpcRunner Func, clientExecute func(client grpc.ServerClient)) {
