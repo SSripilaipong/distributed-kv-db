@@ -5,7 +5,6 @@ import (
 	"distributed-kv-db/api/grpc"
 	"distributed-kv-db/serverside/db/coordinator"
 	"errors"
-	"fmt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -22,7 +21,6 @@ func (t grpcImpl) GetValue(ctx context.Context, req *grpc.GetValueRequest) (*grp
 		return &grpc.GetValueResponse{Value: resp.Value().Value}, nil
 	}
 	if errors.As(resp.Error(), &coordinator.KeyNotFoundError{}) {
-		fmt.Println(resp.Error().Error())
 		return nil, status.Error(codes.NotFound, resp.Error().Error())
 	}
 	return nil, status.Error(codes.Unknown, resp.Error().Error())

@@ -15,3 +15,17 @@ func NewKeyNotFoundError(key string) KeyNotFoundError {
 func (e KeyNotFoundError) Error() string {
 	return fmt.Sprintf("key %#v not found", e.key)
 }
+
+type KeyNotFoundError2 struct {
+	key string
+}
+
+var _ error = KeyNotFoundError2{}
+
+func NewKeyNotFoundError2(key string) KeyNotFoundError2 {
+	return KeyNotFoundError2{key: key}
+}
+
+func (e KeyNotFoundError2) Error() string {
+	return fmt.Sprintf("key %#v not found", e.key)
+}
