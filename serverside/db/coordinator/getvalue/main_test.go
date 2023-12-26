@@ -14,7 +14,7 @@ func Test_newFunc(t *testing.T) {
 		var query string
 
 		getValueWithRequest(
-			newFuncWithReadRepairFunc(readRepairCaptureQuery(&query)),
+			newWithReadRepairFunc(readRepairCaptureQuery(&query)),
 			coordinator.GetValueRequest{Key: "abc"},
 		)
 
@@ -25,7 +25,7 @@ func Test_newFunc(t *testing.T) {
 		var ctx context.Context
 
 		getValueWithContext(
-			newFuncWithReadRepairFunc(readRepairCaptureContext(&ctx)),
+			newWithReadRepairFunc(readRepairCaptureContext(&ctx)),
 			cntx.WithValue("name", "same ctx"),
 		)
 
@@ -34,7 +34,7 @@ func Test_newFunc(t *testing.T) {
 
 	t.Run("should return from read repair", func(tt *testing.T) {
 		resp := getValueWithResponse(
-			newFuncWithReadRepairFunc(readRepairWithResponse(result.Value("yeah"))),
+			newWithReadRepairFunc(readRepairWithResponse(result.Value("yeah"))),
 		)
 
 		assert.Equal(tt, result.Value(coordinator.GetValueResponse{Value: "yeah"}), resp)

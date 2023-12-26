@@ -5,7 +5,7 @@ import (
 	"distributed-kv-db/common/result"
 )
 
-var newFuncWithReadRepairFunc = newFunc
+var newWithReadRepairFunc = New
 
 func readRepairCaptureQuery(query *string) readRepairFunc {
 	return func(ctx context.Context, q string) result.Of[string] {

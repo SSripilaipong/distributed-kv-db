@@ -7,9 +7,7 @@ import (
 	"distributed-kv-db/serverside/db/coordinator"
 )
 
-var New = fn.Compose(newFunc, newReadRepairFunc)
-
-func newFunc(readRepair readRepairFunc) coordinator.GetValueFunc {
+func New(readRepair readRepairFunc) coordinator.GetValueFunc {
 	return fn.Uncurry(func(ctx context.Context) partialFunc {
 		return fn.Compose3(
 			result.Fmap(responseFromValue), fn.Ctx(ctx, readRepair), keyOfRequest,
