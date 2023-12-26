@@ -5,15 +5,15 @@ import (
 	"distributed-kv-db/serverside/db/server"
 )
 
-func New(interrupt func() <-chan struct{}) Func {
+func Builder(interrupt func() <-chan struct{}) Func {
 	serverFunc := server.New(
 		coordinator.NewGetValue(),
 		coordinator.NewSetValue(),
 	)
-	return build(interrupt, serverFunc)
+	return builder(interrupt, serverFunc)
 }
 
-func build(interrupt func() <-chan struct{}, serverFunc server.Func) Func {
+func builder(interrupt func() <-chan struct{}, serverFunc server.Func) Func {
 	return func(dbPort, peeringPort int, advertisedIp string, peerAddresses []string) error {
 		logStartDb(dbPort, peeringPort, advertisedIp, peerAddresses)
 

@@ -55,11 +55,11 @@ func Test_build(t *testing.T) {
 }
 
 func buildInterruptedWithServerFunc(serverFunc server.Func) Func {
-	return build(interruptedSignal, serverFunc)
+	return builder(interruptedSignal, serverFunc)
 }
 
 func buildWithServerFunc(serverFunc server.Func) Func {
-	return build(uninterruptedSignal, serverFunc)
+	return builder(uninterruptedSignal, serverFunc)
 }
 
 func execute(f Func) error {

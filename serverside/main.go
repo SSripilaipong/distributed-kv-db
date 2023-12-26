@@ -8,5 +8,5 @@ import (
 )
 
 func NewCli() []*cli.Command {
-	return serverCli.New(db.New(machine.WaitForInterrupt))
+	return serverCli.New(db.Builder(machine.WaitForInterrupt))
 }
