@@ -11,3 +11,10 @@ func readRepairCaptureQuery(query *string) readRepairFunc {
 		return result.Value("")
 	}
 }
+
+func readRepairCaptureContext(ctx *context.Context) readRepairFunc {
+	return func(c context.Context, q string) result.Of[string] {
+		*ctx = c
+		return result.Value("")
+	}
+}

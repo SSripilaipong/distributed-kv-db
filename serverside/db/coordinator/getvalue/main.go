@@ -12,7 +12,7 @@ func New(discovery quorumDiscovery) coordinator.GetValueFunc {
 
 func newFunc(readRepair readRepairFunc) coordinator.GetValueFunc {
 	return func(ctx context.Context, request coordinator.GetValueRequest) result.Of[coordinator.GetValueResponse] {
-		readRepair(nil, request.Key)
+		readRepair(ctx, request.Key)
 		return result.Value(coordinator.GetValueResponse{Value: "tmp"})
 	}
 }
