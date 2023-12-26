@@ -1,14 +1,15 @@
 package db
 
 import (
-	"distributed-kv-db/serverside/db/coordinator"
+	"distributed-kv-db/serverside/db/coordinator/getvalue"
+	"distributed-kv-db/serverside/db/coordinator/setvalue"
 	"distributed-kv-db/serverside/db/server"
 )
 
 func Builder(interrupt func() <-chan struct{}) Func {
 	serverFunc := server.New(
-		coordinator.NewGetValue(),
-		coordinator.NewSetValue(),
+		getvalue.New(nil),
+		setvalue.New(),
 	)
 	return builder(interrupt, serverFunc)
 }
