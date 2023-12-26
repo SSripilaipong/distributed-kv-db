@@ -5,13 +5,13 @@ import (
 	"distributed-kv-db/common/result"
 )
 
-type GetValueRequest interface {
-	Key() string
+type GetValueRequest struct {
+	Key string
 }
 
-type SetValueRequest interface {
-	Key() string
-	Value() string
+type SetValueRequest struct {
+	Key   string
+	Value string
 }
 
 type GetValueResponse struct {
