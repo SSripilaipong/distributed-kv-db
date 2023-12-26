@@ -3,6 +3,7 @@ package getvalue
 import (
 	"context"
 	"distributed-kv-db/common/cntx"
+	"distributed-kv-db/common/result"
 	"distributed-kv-db/serverside/db/coordinator"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -13,7 +14,7 @@ func Test_newFunc(t *testing.T) {
 		var query string
 
 		getValueWithRequest(
-			newFunc(readRepairCaptureQuery(&query)),
+			newFuncWithReadRepairFunc(readRepairCaptureQuery(&query)),
 			coordinator.GetValueRequest{Key: "abc"},
 		)
 
@@ -24,10 +25,18 @@ func Test_newFunc(t *testing.T) {
 		var ctx context.Context
 
 		getValueWithContext(
-			newFunc(readRepairCaptureContext(&ctx)),
+			newFuncWithReadRepairFunc(readRepairCaptureContext(&ctx)),
 			cntx.WithValue("name", "same ctx"),
 		)
 
 		assert.Equal(tt, "same ctx", ctx.Value("name"))
+	})
+
+	t.Run("should return from read repair", func(tt *testing.T) {
+		resp := getValueWithResponse(
+			newFuncWithReadRepairFunc(readRepairWithResponse(result.Value("yeah"))),
+		)
+
+		assert.Equal(tt, result.Value(coordinator.GetValueResponse{Value: "yeah"}), resp)
 	})
 }
