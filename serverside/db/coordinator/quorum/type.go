@@ -6,6 +6,11 @@ import (
 )
 
 type Discovery[Key, Data any] interface {
+	Nodes(context.Context) rslt.Of[[]Node[Key, Data]]
+}
+
+type Node[Key, Data any] interface {
+	Read(context.Context, Key) rslt.Of[Data]
 }
 
 type ReadFunc[Key, Data any] func(context.Context, Key) rslt.Of[Data]

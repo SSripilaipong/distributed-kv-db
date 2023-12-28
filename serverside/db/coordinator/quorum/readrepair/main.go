@@ -5,10 +5,15 @@ import (
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
+	"distributed-kv-db/serverside/db/coordinator/quorum/read"
+	"distributed-kv-db/serverside/db/coordinator/quorum/write"
 )
 
-func New[Key, Data any](_ quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data] {
-	return newFunc[Key, Data](nil, nil)
+func New[Key, Data any](discovery quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data] {
+	return newFunc[Key, Data](
+		read.New(discovery),
+		write.New(discovery),
+	)
 }
 
 func newFunc[Key, Data any](quorumRead quorum.ReadFunc[Key, Data], quorumWrite quorum.WriteFunc[Key, Data]) quorum.ReadFunc[Key, Data] {
