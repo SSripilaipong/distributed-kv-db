@@ -66,3 +66,9 @@ func quorumWriteCaptureIsCalled[Key, Data any](isCalled *bool) quorum.WriteFunc[
 		return nil
 	}
 }
+
+func quorumWriteWithError[Key, Data any](err error) quorum.WriteFunc[Key, Data] {
+	return func(c context.Context, k Key, d Data) error {
+		return err
+	}
+}

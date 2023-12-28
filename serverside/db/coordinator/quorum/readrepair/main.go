@@ -13,13 +13,12 @@ func New[Key, Data any](_ quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data
 
 func newFunc[Key, Data any](quorumRead quorum.ReadFunc[Key, Data], quorumWrite quorum.WriteFunc[Key, Data]) quorum.ReadFunc[Key, Data] {
 	return func(ctx context.Context, key Key) rslt.Of[Data] {
-		result := quorumRead(ctx, key)
-		quorumWrite := fmapResultToError(fn.Bind2(ctx, key, quorumWrite))
-		_ = quorumWrite(result)
-		return result
+		readResult := quorumRead(ctx, key)
+		quorumWriteIfNotError := fmapResultToError(fn.Bind2(ctx, key, quorumWrite))
+		return rslt.ResultOrError(readResult, quorumWriteIfNotError(readResult))
 	}
 }
 
 func fmapResultToError[A any](f func(A) error) func(rslt.Of[A]) error {
-	return fn.Compose[rslt.Of[A]](rslt.OfError, rslt.Fmap(f))
+	return fn.Compose(rslt.OfError, rslt.Fmap(f))
 }

@@ -14,9 +14,9 @@ func OfError(r Of[error]) error {
 	return r.Error()
 }
 
-func ValueOrError[T any](x T, err error) Of[T] {
-	if err != nil {
-		return Error[T](err)
+func ResultOrError[T any](r Of[T], err error) Of[T] {
+	if r.IsError() || err == nil {
+		return r
 	}
-	return Value(x)
+	return Error[T](err)
 }

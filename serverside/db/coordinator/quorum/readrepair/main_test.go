@@ -65,4 +65,11 @@ func Test_New(t *testing.T) {
 		))
 		assert.Equal(tt, errors.New("boom"), result.Error())
 	})
+
+	t.Run("should return error from quorum write if quorum read succeeds but quorum write fails", func(tt *testing.T) {
+		result := readRepair(newFuncWithQuorumWrite(
+			quorumWriteWithError[int, int](errors.New("hehe")),
+		))
+		assert.Equal(tt, errors.New("hehe"), result.Error())
+	})
 }
