@@ -14,6 +14,13 @@ func quorumReadCaptureKey[Key, Data any](key *Key) quorum.ReadFunc[Key, Data] {
 	}
 }
 
+func quorumReadCaptureContext[Key, Data any](ctx *context.Context) quorum.ReadFunc[Key, Data] {
+	return func(c context.Context, k Key) rslt.Of[Data] {
+		*ctx = c
+		return rslt.Value(typ.Zero[Data]())
+	}
+}
+
 func quorumReadWithResult[Key, Data any](result rslt.Of[Data]) quorum.ReadFunc[Key, Data] {
 	return func(ctx context.Context, k Key) rslt.Of[Data] {
 		return result
