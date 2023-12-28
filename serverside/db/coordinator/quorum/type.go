@@ -5,7 +5,8 @@ import (
 	"distributed-kv-db/common/result"
 )
 
-type Discovery[Query, Data any] interface {
+type Discovery[Key, Data any] interface {
 }
 
-type ReadRepairFunc[Query, Data any] func(context.Context, Query) result.Of[Data]
+type ReadFunc[Key, Data any] func(context.Context, Key) result.Of[Data]
+type WriteFunc[Key, Data any] func(context.Context, Key, Data) error
