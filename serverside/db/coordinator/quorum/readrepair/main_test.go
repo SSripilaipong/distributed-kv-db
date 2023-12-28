@@ -39,4 +39,13 @@ func Test_New(t *testing.T) {
 		))
 		assert.Equal(tt, 555, data)
 	})
+
+	t.Run("should quorum write with context", func(tt *testing.T) {
+		var ctx context.Context
+		readRepairWithContext(newFuncWithQuorumWrite(
+			quorumWriteCaptureContext[int, int](&ctx)),
+			cntx.WithValue("my", "context ja"),
+		)
+		assert.Equal(tt, "context ja", ctx.Value("my"))
+	})
 }

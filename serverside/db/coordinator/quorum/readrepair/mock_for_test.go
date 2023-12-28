@@ -52,3 +52,10 @@ func quorumWriteCaptureData[Key, Data any](data *Data) quorum.WriteFunc[Key, Dat
 		return nil
 	}
 }
+
+func quorumWriteCaptureContext[Key, Data any](ctx *context.Context) quorum.WriteFunc[Key, Data] {
+	return func(c context.Context, k Key, d Data) error {
+		*ctx = c
+		return nil
+	}
+}
