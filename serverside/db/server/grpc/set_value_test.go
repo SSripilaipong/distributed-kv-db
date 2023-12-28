@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"distributed-kv-db/api/grpc"
-	"distributed-kv-db/common/result"
+	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/serverside/db/coordinator"
 	"errors"
 	"github.com/stretchr/testify/assert"
@@ -29,7 +29,7 @@ func Test_set_value(t *testing.T) {
 
 	t.Run("should return response", func(t *testing.T) {
 		response, err := runServerAndSetValueWithResponse(
-			newWithSetValueFunc(setValueWithResponse(result.Value(coordinator.SetValueResponse{}))),
+			newWithSetValueFunc(setValueWithResponse(rslt.Value(coordinator.SetValueResponse{}))),
 		)
 
 		assert.NotNil(t, response) // currently no properties so just check not nil
@@ -38,7 +38,7 @@ func Test_set_value(t *testing.T) {
 
 	t.Run("should return unknown error", func(t *testing.T) {
 		response, err := runServerAndSetValueWithResponse(
-			newWithSetValueFunc(setValueWithResponse(result.Error[coordinator.SetValueResponse](errors.New("boom")))),
+			newWithSetValueFunc(setValueWithResponse(rslt.Error[coordinator.SetValueResponse](errors.New("boom")))),
 		)
 
 		assert.Nil(t, response)

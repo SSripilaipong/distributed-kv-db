@@ -5,32 +5,32 @@ import (
 	"distributed-kv-db/api/grpc"
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/grpcutil"
-	"distributed-kv-db/common/result"
+	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/serverside/db/coordinator"
 )
 
 func setValueCaptureRequest(request *coordinator.SetValueRequest) coordinator.SetValueFunc {
-	return func(ctx context.Context, r coordinator.SetValueRequest) result.Of[coordinator.SetValueResponse] {
+	return func(ctx context.Context, r coordinator.SetValueRequest) rslt.Of[coordinator.SetValueResponse] {
 		*request = r
-		return result.Value(coordinator.SetValueResponse{})
+		return rslt.Value(coordinator.SetValueResponse{})
 	}
 }
 
-func setValueWithResponse(response result.Of[coordinator.SetValueResponse]) coordinator.SetValueFunc {
-	return func(ctx context.Context, r coordinator.SetValueRequest) result.Of[coordinator.SetValueResponse] {
+func setValueWithResponse(response rslt.Of[coordinator.SetValueResponse]) coordinator.SetValueFunc {
+	return func(ctx context.Context, r coordinator.SetValueRequest) rslt.Of[coordinator.SetValueResponse] {
 		return response
 	}
 }
 
 func getValueCaptureRequest(request *coordinator.GetValueRequest) coordinator.GetValueFunc {
-	return func(ctx context.Context, r coordinator.GetValueRequest) result.Of[coordinator.GetValueResponse] {
+	return func(ctx context.Context, r coordinator.GetValueRequest) rslt.Of[coordinator.GetValueResponse] {
 		*request = r
-		return result.Value(coordinator.GetValueResponse{})
+		return rslt.Value(coordinator.GetValueResponse{})
 	}
 }
 
-func getValueWithResponse(response result.Of[coordinator.GetValueResponse]) coordinator.GetValueFunc {
-	return func(ctx context.Context, r coordinator.GetValueRequest) result.Of[coordinator.GetValueResponse] {
+func getValueWithResponse(response rslt.Of[coordinator.GetValueResponse]) coordinator.GetValueFunc {
+	return func(ctx context.Context, r coordinator.GetValueRequest) rslt.Of[coordinator.GetValueResponse] {
 		return response
 	}
 }
@@ -69,7 +69,7 @@ func runServerAndExecuteClient(grpcRunner Func, clientExecute func(client grpc.S
 
 	go func() {
 		clientExecute(client)
-		result.Fmap(grpcutil.CloseClient)(conn)
+		rslt.Fmap(grpcutil.CloseClient)(conn)
 		server.ForceStop()
 	}()
 	<-server.Done()
@@ -83,4 +83,4 @@ func newWithGetValueFunc(getValue coordinator.GetValueFunc) Func {
 	return New(getValue, nil)
 }
 
-var newClient = result.Fmap(fn.Compose(grpc.NewServerClient, grpcutil.ClientToInterface))
+var newClient = rslt.Fmap(fn.Compose(grpc.NewServerClient, grpcutil.ClientToInterface))

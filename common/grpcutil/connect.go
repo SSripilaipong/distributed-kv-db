@@ -1,18 +1,18 @@
 package grpcutil
 
 import (
-	"distributed-kv-db/common/result"
+	"distributed-kv-db/common/rslt"
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func Connect(address string) result.Of[*grpc.ClientConn] {
+func Connect(address string) rslt.Of[*grpc.ClientConn] {
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return result.Error[*grpc.ClientConn](err)
+		return rslt.Error[*grpc.ClientConn](err)
 	}
-	return result.Value(conn)
+	return rslt.Value(conn)
 }
 
 func LocalAddress(port int) string {

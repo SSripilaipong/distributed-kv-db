@@ -3,7 +3,7 @@ package getvalue
 import (
 	"context"
 	"distributed-kv-db/common/cntx"
-	"distributed-kv-db/common/result"
+	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/serverside/db/coordinator"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -34,9 +34,9 @@ func Test_newFunc(t *testing.T) {
 
 	t.Run("should return from read repair", func(tt *testing.T) {
 		resp := getValueWithResponse(
-			newWithReadRepairFunc(readRepairWithResponse(result.Value("yeah"))),
+			newWithReadRepairFunc(readRepairWithResponse(rslt.Value("yeah"))),
 		)
 
-		assert.Equal(tt, result.Value(coordinator.GetValueResponse{Value: "yeah"}), resp)
+		assert.Equal(tt, rslt.Value(coordinator.GetValueResponse{Value: "yeah"}), resp)
 	})
 }

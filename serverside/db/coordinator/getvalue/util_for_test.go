@@ -2,27 +2,27 @@ package getvalue
 
 import (
 	"context"
-	"distributed-kv-db/common/result"
+	"distributed-kv-db/common/rslt"
 )
 
 var newWithReadRepairFunc = New
 
 func readRepairCaptureQuery(query *string) readRepairFunc {
-	return func(ctx context.Context, q string) result.Of[string] {
+	return func(ctx context.Context, q string) rslt.Of[string] {
 		*query = q
-		return result.Value("")
+		return rslt.Value("")
 	}
 }
 
 func readRepairCaptureContext(ctx *context.Context) readRepairFunc {
-	return func(c context.Context, q string) result.Of[string] {
+	return func(c context.Context, q string) rslt.Of[string] {
 		*ctx = c
-		return result.Value("")
+		return rslt.Value("")
 	}
 }
 
-func readRepairWithResponse(resp result.Of[string]) readRepairFunc {
-	return func(c context.Context, q string) result.Of[string] {
+func readRepairWithResponse(resp rslt.Of[string]) readRepairFunc {
+	return func(c context.Context, q string) rslt.Of[string] {
 		return resp
 	}
 }

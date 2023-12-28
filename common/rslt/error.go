@@ -1,4 +1,4 @@
-package result
+package rslt
 
 func Error[T any](err error) Of[T] {
 	return Of[T]{

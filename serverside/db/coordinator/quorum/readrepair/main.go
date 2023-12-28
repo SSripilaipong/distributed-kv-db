@@ -2,7 +2,7 @@ package readrepair
 
 import (
 	"context"
-	"distributed-kv-db/common/result"
+	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
 
@@ -11,8 +11,8 @@ func New[Key, Data any](_ quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data
 }
 
 func newFunc[Key, Data any](quorumRead quorum.ReadFunc[Key, Data]) quorum.ReadFunc[Key, Data] {
-	return func(ctx context.Context, key Key) result.Of[Data] {
+	return func(ctx context.Context, key Key) rslt.Of[Data] {
 		quorumRead(nil, key)
-		return result.Error[Data](nil)
+		return rslt.Error[Data](nil)
 	}
 }

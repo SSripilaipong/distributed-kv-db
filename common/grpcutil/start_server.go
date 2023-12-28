@@ -1,7 +1,7 @@
 package grpcutil
 
 import (
-	"distributed-kv-db/common/result"
+	"distributed-kv-db/common/rslt"
 	"fmt"
 	"google.golang.org/grpc"
 	"net"
@@ -14,25 +14,25 @@ type ListenInfo struct {
 	listener net.Listener
 }
 
-func ListenToPort(port int) result.Of[ListenInfo] {
+func ListenToPort(port int) rslt.Of[ListenInfo] {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
-		return result.Error[ListenInfo](fmt.Errorf("cannot listen to port: %w", err))
+		return rslt.Error[ListenInfo](fmt.Errorf("cannot listen to port: %w", err))
 	}
 
 	tokens := strings.Split(lis.Addr().String(), ":")
 	port, err = strconv.Atoi(tokens[len(tokens)-1])
 	if err != nil {
-		return result.Error[ListenInfo](fmt.Errorf("not recognized port: %w", err))
+		return rslt.Error[ListenInfo](fmt.Errorf("not recognized port: %w", err))
 	}
-	return result.Value(ListenInfo{
+	return rslt.Value(ListenInfo{
 		Port:     port,
 		listener: lis,
 	})
 }
 
-func StartServerFunc(register func(*grpc.Server)) func(listen ListenInfo) result.Of[StartedServer] {
-	return func(listen ListenInfo) result.Of[StartedServer] {
+func StartServerFunc(register func(*grpc.Server)) func(listen ListenInfo) rslt.Of[StartedServer] {
+	return func(listen ListenInfo) rslt.Of[StartedServer] {
 		server := grpc.NewServer()
 		register(server)
 
@@ -46,6 +46,6 @@ func StartServerFunc(register func(*grpc.Server)) func(listen ListenInfo) result
 			}
 		}()
 
-		return result.Value(StartedServer{listen: listen, server: server, done: done})
+		return rslt.Value(StartedServer{listen: listen, server: server, done: done})
 	}
 }

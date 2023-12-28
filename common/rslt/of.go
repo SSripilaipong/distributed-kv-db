@@ -1,4 +1,4 @@
-package result
+package rslt
 
 type Of[T any] struct {
 	isError bool

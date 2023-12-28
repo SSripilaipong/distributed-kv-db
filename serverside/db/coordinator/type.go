@@ -2,7 +2,7 @@ package coordinator
 
 import (
 	"context"
-	"distributed-kv-db/common/result"
+	"distributed-kv-db/common/rslt"
 )
 
 type GetValueRequest struct {
@@ -20,6 +20,6 @@ type GetValueResponse struct {
 
 type SetValueResponse struct{}
 
-type GetValueFunc func(ctx context.Context, request GetValueRequest) result.Of[GetValueResponse]
+type GetValueFunc func(ctx context.Context, request GetValueRequest) rslt.Of[GetValueResponse]
 
-type SetValueFunc func(ctx context.Context, request SetValueRequest) result.Of[SetValueResponse]
+type SetValueFunc func(ctx context.Context, request SetValueRequest) rslt.Of[SetValueResponse]

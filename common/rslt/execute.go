@@ -1,4 +1,4 @@
-package result
+package rslt
 
 func MapExecute[A, B any](f Of[func(A) B]) func(A) Of[B] {
 	if f.IsOk() {
