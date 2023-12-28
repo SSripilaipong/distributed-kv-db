@@ -16,7 +16,7 @@ func newFunc[Key, Data any](quorumRead quorum.ReadFunc[Key, Data], quorumWrite q
 		result := quorumRead(ctx, key)
 		quorumWrite := fmapResultToError(fn.Bind2(ctx, key, quorumWrite))
 		_ = quorumWrite(result)
-		return rslt.Error[Data](nil)
+		return result
 	}
 }
 
