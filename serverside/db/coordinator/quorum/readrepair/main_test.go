@@ -25,16 +25,18 @@ func Test_New(t *testing.T) {
 		assert.Equal(tt, "the same", ctx.Value("this is"))
 	})
 
-	t.Run("should quorum write with key and result from quorum read", func(tt *testing.T) {
-		var key, data int
-
-		readRepairWithKey(newFuncWithQuorumReadAndQuorumWrite(
-			quorumReadWithResult[int, int](rslt.Value(555)),
-			quorumWriteCaptureKeyAndData[int, int](&key, &data),
-		), 456)
-
+	t.Run("should quorum write with key", func(tt *testing.T) {
+		var key int
+		readRepairWithKey(newFuncWithQuorumWrite(quorumWriteCaptureKey[int, int](&key)), 456)
 		assert.Equal(tt, 456, key)
-		assert.Equal(tt, 555, data)
 	})
 
+	t.Run("should quorum write with result from quorum read", func(tt *testing.T) {
+		var data int
+		readRepair(newFuncWithQuorumReadAndQuorumWrite(
+			quorumReadWithResult[int, int](rslt.Value(555)),
+			quorumWriteCaptureData[int, int](&data),
+		))
+		assert.Equal(tt, 555, data)
+	})
 }

@@ -7,6 +7,12 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
 
+func quorumRead[Key, Data any]() quorum.ReadFunc[Key, Data] {
+	return func(ctx context.Context, k Key) rslt.Of[Data] {
+		return rslt.Value(typ.Zero[Data]())
+	}
+}
+
 func quorumReadCaptureKey[Key, Data any](key *Key) quorum.ReadFunc[Key, Data] {
 	return func(ctx context.Context, k Key) rslt.Of[Data] {
 		*key = k
@@ -33,9 +39,16 @@ func quorumWrite[Key, Data any]() quorum.WriteFunc[Key, Data] {
 	}
 }
 
-func quorumWriteCaptureKeyAndData[Key, Data any](key *Key, data *Data) quorum.WriteFunc[Key, Data] {
+func quorumWriteCaptureKey[Key, Data any](key *Key) quorum.WriteFunc[Key, Data] {
 	return func(ctx context.Context, k Key, d Data) error {
-		*key, *data = k, d
+		*key = k
+		return nil
+	}
+}
+
+func quorumWriteCaptureData[Key, Data any](data *Data) quorum.WriteFunc[Key, Data] {
+	return func(ctx context.Context, k Key, d Data) error {
+		*data = d
 		return nil
 	}
 }
