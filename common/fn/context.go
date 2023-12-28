@@ -7,5 +7,7 @@ func Ctx[A, B any](ctx context.Context, f func(ctx context.Context, x A) (y B)) 
 }
 
 func Ctx2[A1, A2, B any](ctx context.Context, f func(ctx context.Context, x1 A1, x2 A2) (y B)) func(x1 A1, x2 A2) (y B) {
-	return Bind2(ctx, f)
+	return func(x1 A1, x2 A2) B {
+		return f(ctx, x1, x2)
+	}
 }

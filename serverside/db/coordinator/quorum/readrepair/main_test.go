@@ -4,6 +4,7 @@ import (
 	"context"
 	"distributed-kv-db/common/cntx"
 	"distributed-kv-db/common/rslt"
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -47,5 +48,14 @@ func Test_New(t *testing.T) {
 			cntx.WithValue("my", "context ja"),
 		)
 		assert.Equal(tt, "context ja", ctx.Value("my"))
+	})
+
+	t.Run("should not quorum write if quorum read fails", func(tt *testing.T) {
+		var isCalled bool
+		readRepair(newFuncWithQuorumReadAndQuorumWrite(
+			quorumReadWithResult[int, int](rslt.Error[int](errors.New(""))),
+			quorumWriteCaptureIsCalled[int, int](&isCalled),
+		))
+		assert.False(tt, isCalled)
 	})
 }
