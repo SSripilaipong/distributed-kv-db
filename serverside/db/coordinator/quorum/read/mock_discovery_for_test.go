@@ -16,6 +16,10 @@ func (m discoveryMock[Key, Data]) Nodes(ctx context.Context) rslt.Of[[]quorum.No
 
 var _ quorum.Discovery[int, int] = &discoveryMock[int, int]{}
 
+func discovery[Key, Data any]() quorum.Discovery[Key, Data] {
+	return discoveryWithNodes(rslt.Value([]quorum.Node[Key, Data]{}))
+}
+
 func discoveryWithNodes[Key, Data any](nodes rslt.Of[[]quorum.Node[Key, Data]]) quorum.Discovery[Key, Data] {
 	return discoveryMock[Key, Data]{nodes: func(ctx context.Context) rslt.Of[[]quorum.Node[Key, Data]] {
 		return nodes
