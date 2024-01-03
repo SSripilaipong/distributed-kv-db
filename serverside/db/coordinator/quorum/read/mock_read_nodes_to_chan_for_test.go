@@ -6,6 +6,10 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
 
+func readNodesToChannelDummy[Key, Data any]([]quorum.Node[Key, Data]) <-chan Data {
+	return chn.Repeat(typ.Zero[Data]())
+}
+
 func readNodesToChannelCaptureNodes[Key, Data any](nodes *[]quorum.Node[Key, Data]) func([]quorum.Node[Key, Data]) <-chan Data {
 	return func(n []quorum.Node[Key, Data]) <-chan Data {
 		*nodes = n

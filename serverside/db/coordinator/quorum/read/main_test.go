@@ -50,7 +50,7 @@ func Test_New(t *testing.T) {
 	})
 
 	t.Run("should call read only a quorum of nodes from channels", func(tt *testing.T) {
-		dataChan := chn.NewFromSlice([]Key{11, 12, 13})
+		dataChan := chn.NewFromSlice([]Data{11, 12, 13})
 		Read(newFuncWithDiscoveryAndReadNodesToChannels(
 			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{}, NodeMock{}, NodeMock{}}))),
 			ReadNodesToChannelWithResult(dataChan),
@@ -58,4 +58,13 @@ func Test_New(t *testing.T) {
 		assert.Equal(tt, rslt.Value(13), chn.ReceiveNoWait(dataChan)) // remaining data
 	})
 
+	t.Run("should find latest data with a quorum of data", func(tt *testing.T) {
+		var xs []Data
+		Read(newFuncWithDiscoveryAndReadNodesToChannelsAndLatestData(
+			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{}, NodeMock{}, NodeMock{}}))),
+			ReadNodesToChannelWithResult(chn.NewFromSlice([]Data{123, 456, 0})),
+			latestDataCaptureXs(&xs),
+		))
+		assert.Equal(tt, []Data{123, 456}, xs)
+	})
 }
