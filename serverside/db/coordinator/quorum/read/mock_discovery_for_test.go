@@ -25,3 +25,10 @@ func discoveryWithNodes[Key, Data any](nodes rslt.Of[[]quorum.Node[Key, Data]]) 
 		return nodes
 	}}
 }
+
+func discoveryCaptureCtx[Key, Data any](ctx *context.Context) quorum.Discovery[Key, Data] {
+	return discoveryMock[Key, Data]{nodes: func(c context.Context) rslt.Of[[]quorum.Node[Key, Data]] {
+		*ctx = c
+		return rslt.Value([]quorum.Node[Key, Data]{})
+	}}
+}

@@ -1,7 +1,9 @@
 package read
 
 import (
+	"context"
 	"distributed-kv-db/common/chn"
+	"distributed-kv-db/common/cntx"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 	"github.com/stretchr/testify/assert"
@@ -12,6 +14,17 @@ func Test_New(t *testing.T) {
 	type Node = quorum.Node[int, int]
 	type NodeMock = nodeWithId[int, int]
 	Read := read[int, int]
+	ReadWithContext := readWithContext[int, int]
+	DiscoveryCaptureCtx := discoveryCaptureCtx[int, int]
+
+	t.Run("should read nodes from discovery with context", func(tt *testing.T) {
+		var ctx context.Context
+		ReadWithContext(
+			newFuncWithDiscovery(DiscoveryCaptureCtx(&ctx)),
+			cntx.WithValue("code name", "007"),
+		)
+		assert.Equal(tt, "007", ctx.Value("code name"))
+	})
 
 	t.Run("should call read nodes from discovery to channel", func(tt *testing.T) {
 		var nodes []Node

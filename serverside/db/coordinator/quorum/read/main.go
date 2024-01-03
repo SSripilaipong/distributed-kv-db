@@ -11,13 +11,13 @@ import (
 func New[Key, Data any](discovery quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data] {
 	return newFunc(
 		discovery,
-		nil,
+		nil, // TODO inject this
 	)
 }
 
 func newFunc[Key, Data any](discovery quorum.Discovery[Key, Data], readNodesToChannel func([]quorum.Node[Key, Data]) <-chan Data) quorum.ReadFunc[Key, Data] {
 	return func(ctx context.Context, key Key) rslt.Of[Data] {
-		nodes := discovery.Nodes(nil)
+		nodes := discovery.Nodes(ctx)
 		numberOfNodes := len(nodes.Value())
 		readQuorumOfData := fn.Compose(
 			rslt.FmapPartial(chn.FirstNFunc[Data](numberOfQuorum(numberOfNodes))), rslt.Fmap(readNodesToChannel),
