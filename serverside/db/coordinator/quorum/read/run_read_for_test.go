@@ -14,3 +14,7 @@ func read[Key, Data any](read quorum.ReadFunc[Key, Data]) rslt.Of[Data] {
 func readWithContext[Key, Data any](read quorum.ReadFunc[Key, Data], ctx context.Context) rslt.Of[Data] {
 	return read(ctx, typ.Zero[Key]())
 }
+
+func readWithKey[Key, Data any](read quorum.ReadFunc[Key, Data], key Key) rslt.Of[Data] {
+	return read(context.Background(), key)
+}

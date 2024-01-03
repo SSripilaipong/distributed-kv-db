@@ -6,7 +6,7 @@ import (
 )
 
 type Discovery[Key, Data any] interface {
-	Nodes(context.Context) rslt.Of[[]Node[Key, Data]]
+	Nodes(ctx context.Context, key Key) rslt.Of[[]Node[Key, Data]]
 }
 
 type Node[Key, Data any] interface {

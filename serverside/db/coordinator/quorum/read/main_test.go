@@ -11,16 +11,30 @@ import (
 )
 
 func Test_New(t *testing.T) {
-	type Node = quorum.Node[int, int]
-	type NodeMock = nodeWithId[int, int]
-	Read := read[int, int]
-	ReadWithContext := readWithContext[int, int]
-	DiscoveryCaptureCtx := discoveryCaptureCtx[int, int]
+	type Key = int
+	type Data = int
+	type Node = quorum.Node[Key, Data]
+	type NodeMock = nodeWithId[Key, Data]
+	Read := read[Key, Data]
+	ReadWithContext := readWithContext[Key, Data]
+	ReadWithKey := readWithKey[Key, Data]
+	NodesFuncCaptureKey := nodesFuncCaptureKey[Key, Data]
+	NodesFuncCaptureContext := nodesFuncCaptureContext[Key, Data]
+	ReadNodesToChannelWithResult := readNodesToChannelWithResult[Key, Data]
+
+	t.Run("should read nodes from discovery with key", func(tt *testing.T) {
+		var key Key
+		ReadWithKey(
+			newFuncWithDiscovery(discoveryWithNodesFunc(NodesFuncCaptureKey(&key))),
+			123,
+		)
+		assert.Equal(tt, 123, key)
+	})
 
 	t.Run("should read nodes from discovery with context", func(tt *testing.T) {
 		var ctx context.Context
 		ReadWithContext(
-			newFuncWithDiscovery(DiscoveryCaptureCtx(&ctx)),
+			newFuncWithDiscovery(discoveryWithNodesFunc(NodesFuncCaptureContext(&ctx))),
 			cntx.WithValue("code name", "007"),
 		)
 		assert.Equal(tt, "007", ctx.Value("code name"))
@@ -29,17 +43,17 @@ func Test_New(t *testing.T) {
 	t.Run("should call read nodes from discovery to channel", func(tt *testing.T) {
 		var nodes []Node
 		Read(newFuncWithDiscoveryAndReadNodesToChannels(
-			discoveryWithNodes(rslt.Value([]Node{NodeMock{1}, NodeMock{2}})),
+			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{1}, NodeMock{2}}))),
 			readNodesToChannelCaptureNodes(&nodes),
 		))
 		assert.Equal(tt, []Node{NodeMock{1}, NodeMock{2}}, nodes)
 	})
 
 	t.Run("should call read only a quorum of nodes from channels", func(tt *testing.T) {
-		dataChan := chn.NewFromSlice([]int{11, 12, 13})
+		dataChan := chn.NewFromSlice([]Key{11, 12, 13})
 		Read(newFuncWithDiscoveryAndReadNodesToChannels(
-			discoveryWithNodes(rslt.Value([]Node{NodeMock{}, NodeMock{}, NodeMock{}})),
-			readNodesToChannelWithResult[int](dataChan),
+			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{}, NodeMock{}, NodeMock{}}))),
+			ReadNodesToChannelWithResult(dataChan),
 		))
 		assert.Equal(tt, rslt.Value(13), chn.ReceiveNoWait(dataChan)) // remaining data
 	})
