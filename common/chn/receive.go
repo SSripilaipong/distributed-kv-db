@@ -20,15 +20,12 @@ func ReceiveNoWait[T any](ch <-chan T) rslt.Of[T] {
 func FirstNFunc[T any](n int) func(ch <-chan T) rslt.Of[[]T] {
 	return func(ch <-chan T) rslt.Of[[]T] {
 		var result []T
-		for x := range ch {
-			result = append(result, x)
-
-			if len(result) >= n {
-				break
+		for i := 0; i < n; i++ {
+			x, ok := <-ch
+			if !ok {
+				return rslt.Error[[]T](errors.New("channel closed"))
 			}
-		}
-		if len(result) < n {
-			return rslt.Error[[]T](errors.New("channel closed"))
+			result = append(result, x)
 		}
 		return rslt.Value(result)
 	}

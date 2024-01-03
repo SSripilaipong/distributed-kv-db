@@ -12,3 +12,9 @@ func latestDataCaptureXs[Data any](xs *[]Data) func([]Data) Data {
 		return latestDataDummy[Data](nil)
 	}
 }
+
+func latestDataWithResult[Data any](result Data) func([]Data) Data {
+	return func(ys []Data) Data {
+		return result
+	}
+}

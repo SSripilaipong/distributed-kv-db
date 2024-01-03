@@ -4,14 +4,18 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
 
-func newFuncWithDiscoveryAndReadNodesToChannelsAndLatestData[Key, Data any](discovery quorum.Discovery[Key, Data], readNodesToChannel func([]quorum.Node[Key, Data]) <-chan Data, latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
-	return newFunc(discovery, readNodesToChannel, latestData)
+func newFuncWithDiscoveryAndReadNodeDataToChannelsAndLatestData[Key, Data any](discovery quorum.Discovery[Key, Data], readNodeDataToChannel func([]quorum.Node[Key, Data]) <-chan Data, latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
+	return newFunc(discovery, readNodeDataToChannel, latestData)
 }
 
-func newFuncWithDiscoveryAndReadNodesToChannels[Key, Data any](discovery quorum.Discovery[Key, Data], readNodesToChannel func([]quorum.Node[Key, Data]) <-chan Data) quorum.ReadFunc[Key, Data] {
-	return newFuncWithDiscoveryAndReadNodesToChannelsAndLatestData(discovery, readNodesToChannel, latestDataDummy[Data])
+func newFuncWithDiscoveryAndReadNodeDataToChannels[Key, Data any](discovery quorum.Discovery[Key, Data], readNodeDataToChannel func([]quorum.Node[Key, Data]) <-chan Data) quorum.ReadFunc[Key, Data] {
+	return newFuncWithDiscoveryAndReadNodeDataToChannelsAndLatestData(discovery, readNodeDataToChannel, latestDataDummy[Data])
 }
 
 func newFuncWithDiscovery[Key, Data any](discovery quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data] {
-	return newFuncWithDiscoveryAndReadNodesToChannels(discovery, readNodesToChannelDummy[Key, Data])
+	return newFuncWithDiscoveryAndReadNodeDataToChannels(discovery, readNodeDataToChannelDummy[Key, Data])
+}
+
+func newFuncWithLatestData[Key, Data any](latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
+	return newFunc(discoveryDummy[Key, Data](), readNodeDataToChannelDummy[Key, Data], latestData)
 }
