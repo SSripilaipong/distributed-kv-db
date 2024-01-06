@@ -29,9 +29,9 @@ func newFunc[Key, Data any](
 		nodes := discovery.Nodes(ctx, key)
 		quorumData := quorumDataOfN(countResult(nodes))
 
-		latestDataFromQuorum := fn.Compose3(
-			rslt.Fmap(latestData), rslt.FmapPartial(quorumData), rslt.Fmap(readNodeDataToChannel),
-		)
+		latestDataFromQuorum := rslt.FmapPartial(fn.Compose3(
+			rslt.Fmap(latestData), quorumData, readNodeDataToChannel,
+		))
 		return latestDataFromQuorum(nodes)
 	}
 }
