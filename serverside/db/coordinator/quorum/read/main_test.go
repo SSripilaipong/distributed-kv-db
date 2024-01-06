@@ -20,7 +20,7 @@ func Test_New(t *testing.T) {
 	ReadWithKey := readWithKey[Key, Data]
 	NodesFuncCaptureKey := nodesFuncCaptureKey[Key, Data]
 	NodesFuncCaptureContext := nodesFuncCaptureContext[Key, Data]
-	ReadNodeDataToChannelWithResult := readNodeDataToChannelWithResult[Key, Data]
+	ReadNodesDataToChannelWithResult := readNodesDataToChannelWithResult[Key, Data]
 	NewFuncWithLatestData := newFuncWithLatestData[Key, Data]
 
 	t.Run("should read nodes from discovery with key", func(tt *testing.T) {
@@ -43,27 +43,27 @@ func Test_New(t *testing.T) {
 
 	t.Run("should call read nodes from discovery to channel", func(tt *testing.T) {
 		var nodes []Node
-		Read(newFuncWithDiscoveryAndReadNodeDataToChannels(
+		Read(newFuncWithDiscoveryAndReadNodesDataToChannels(
 			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{1}, NodeMock{2}}))),
-			readNodeDataToChannelCaptureNodes(&nodes),
+			readNodesDataToChannelCaptureNodes(&nodes),
 		))
 		assert.Equal(tt, []Node{NodeMock{1}, NodeMock{2}}, nodes)
 	})
 
 	t.Run("should call read only a quorum of nodes from channels", func(tt *testing.T) {
 		dataChan := chn.NewFromSlice([]Data{11, 12, 13})
-		Read(newFuncWithDiscoveryAndReadNodeDataToChannels(
+		Read(newFuncWithDiscoveryAndReadNodesDataToChannels(
 			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{}, NodeMock{}, NodeMock{}}))),
-			ReadNodeDataToChannelWithResult(dataChan),
+			ReadNodesDataToChannelWithResult(dataChan),
 		))
 		assert.Equal(tt, rslt.Value(13), chn.ReceiveNoWait(dataChan)) // remaining data
 	})
 
 	t.Run("should find latest data with a quorum of data", func(tt *testing.T) {
 		var xs []Data
-		Read(newFuncWithDiscoveryAndReadNodeDataToChannelsAndLatestData(
+		Read(newFuncWithDiscoveryAndReadNodesDataToChannelsAndLatestData(
 			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{}, NodeMock{}, NodeMock{}}))),
-			ReadNodeDataToChannelWithResult(chn.NewFromSlice([]Data{123, 456, 0})),
+			ReadNodesDataToChannelWithResult(chn.NewFromSlice([]Data{123, 456, 0})),
 			latestDataCaptureXs(&xs),
 		))
 		assert.Equal(tt, []Data{123, 456}, xs)

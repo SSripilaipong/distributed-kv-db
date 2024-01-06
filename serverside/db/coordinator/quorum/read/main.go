@@ -19,10 +19,10 @@ func New[Key, Data any](discovery quorum.Discovery[Key, Data]) quorum.ReadFunc[K
 
 func newFunc[Key, Data any](
 	discovery quorum.Discovery[Key, Data],
-	readNodeDataToChannel func([]quorum.Node[Key, Data]) <-chan Data,
+	readNodesDataToChannel func(context.Context, []quorum.Node[Key, Data]) <-chan Data,
 	latestData func([]Data) Data,
 ) quorum.ReadFunc[Key, Data] {
-	latestDataFromQuorum := latestDataFromQuorumOfNodesFunc[Key, Data](readNodeDataToChannel, latestData)
+	latestDataFromQuorum := latestDataFromQuorumOfNodesFunc[Key, Data](readNodesDataToChannel, latestData)
 
 	return fn.Uncurry(func(ctx context.Context) func(Key) rslt.Of[Data] {
 		return fn.Compose(
@@ -32,14 +32,14 @@ func newFunc[Key, Data any](
 }
 
 func latestDataFromQuorumOfNodesFunc[Key, Data any](
-	readNodeDataToChannel func([]quorum.Node[Key, Data]) <-chan Data,
+	readNodesDataToChannel func(context.Context, []quorum.Node[Key, Data]) <-chan Data,
 	latestData func([]Data) Data,
 ) func(ctx context.Context, nodes []quorum.Node[Key, Data]) rslt.Of[Data] {
 	quorumOfData := fn.Compose(chn.FirstNFunc[Data], numberOfQuorum)
 
 	return func(ctx context.Context, nodes []quorum.Node[Key, Data]) rslt.Of[Data] {
 		latestDataFromQuorum := fn.Compose3(
-			rslt.Fmap(latestData), quorumOfData(len(nodes)), readNodeDataToChannel,
+			rslt.Fmap(latestData), quorumOfData(len(nodes)), fn.Ctx(nil, readNodesDataToChannel),
 		)
 		return latestDataFromQuorum(nodes)
 	}
