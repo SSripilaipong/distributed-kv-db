@@ -1,6 +1,9 @@
 package read
 
-import "distributed-kv-db/common/typ"
+import (
+	"distributed-kv-db/common/fn"
+	"distributed-kv-db/common/typ"
+)
 
 func latestDataDummy[Data any]([]Data) Data {
 	return typ.Zero[Data]()
@@ -14,7 +17,5 @@ func latestDataCaptureXs[Data any](xs *[]Data) func([]Data) Data {
 }
 
 func latestDataWithResult[Data any](result Data) func([]Data) Data {
-	return func(ys []Data) Data {
-		return result
-	}
+	return fn.Const[[]Data](result)
 }

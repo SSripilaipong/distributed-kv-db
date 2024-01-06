@@ -2,6 +2,8 @@ package read
 
 import (
 	"context"
+	"distributed-kv-db/common/cntx"
+	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
@@ -16,14 +18,12 @@ func (m discoveryMock[Key, Data]) Nodes(ctx context.Context, key Key) rslt.Of[[]
 
 var _ quorum.Discovery[int, int] = &discoveryMock[int, int]{}
 
-func nodesFuncDummy[Key, Data any](ctx context.Context, key Key) rslt.Of[[]quorum.Node[Key, Data]] {
+func nodesFuncDummy[Key, Data any](context.Context, Key) rslt.Of[[]quorum.Node[Key, Data]] {
 	return rslt.Value([]quorum.Node[Key, Data]{})
 }
 
 func nodesFuncWithResult[Key, Data any](nodes rslt.Of[[]quorum.Node[Key, Data]]) func(ctx context.Context, key Key) rslt.Of[[]quorum.Node[Key, Data]] {
-	return func(ctx context.Context, key Key) rslt.Of[[]quorum.Node[Key, Data]] {
-		return nodes
-	}
+	return cntx.Func(fn.Const[Key](nodes))
 }
 
 func nodesFuncCaptureContext[Key, Data any](ctx *context.Context) func(ctx context.Context, key Key) rslt.Of[[]quorum.Node[Key, Data]] {

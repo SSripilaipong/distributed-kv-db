@@ -2,6 +2,8 @@ package getvalue
 
 import (
 	"context"
+	"distributed-kv-db/common/cntx"
+	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 )
 
@@ -22,7 +24,5 @@ func readRepairCaptureContext(ctx *context.Context) readRepairFunc {
 }
 
 func readRepairWithResponse(resp rslt.Of[string]) readRepairFunc {
-	return func(c context.Context, q string) rslt.Of[string] {
-		return resp
-	}
+	return cntx.Func(fn.Const[string](resp))
 }

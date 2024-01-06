@@ -6,34 +6,7 @@ import (
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/grpcutil"
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/serverside/db/coordinator"
 )
-
-func setValueCaptureRequest(request *coordinator.SetValueRequest) coordinator.SetValueFunc {
-	return func(ctx context.Context, r coordinator.SetValueRequest) rslt.Of[coordinator.SetValueResponse] {
-		*request = r
-		return rslt.Value(coordinator.SetValueResponse{})
-	}
-}
-
-func setValueWithResponse(response rslt.Of[coordinator.SetValueResponse]) coordinator.SetValueFunc {
-	return func(ctx context.Context, r coordinator.SetValueRequest) rslt.Of[coordinator.SetValueResponse] {
-		return response
-	}
-}
-
-func getValueCaptureRequest(request *coordinator.GetValueRequest) coordinator.GetValueFunc {
-	return func(ctx context.Context, r coordinator.GetValueRequest) rslt.Of[coordinator.GetValueResponse] {
-		*request = r
-		return rslt.Value(coordinator.GetValueResponse{})
-	}
-}
-
-func getValueWithResponse(response rslt.Of[coordinator.GetValueResponse]) coordinator.GetValueFunc {
-	return func(ctx context.Context, r coordinator.GetValueRequest) rslt.Of[coordinator.GetValueResponse] {
-		return response
-	}
-}
 
 func runServerAndSetValueWithResponse(runner Func) (resp *grpc.SetValueResponse, err error) {
 	runServerAndExecuteClient(runner, func(client grpc.ServerClient) {
@@ -73,14 +46,6 @@ func runServerAndExecuteClient(grpcRunner Func, clientExecute func(client grpc.S
 		server.ForceStop()
 	}()
 	<-server.Done()
-}
-
-func newWithSetValueFunc(setValue coordinator.SetValueFunc) Func {
-	return New(nil, setValue)
-}
-
-func newWithGetValueFunc(getValue coordinator.GetValueFunc) Func {
-	return New(getValue, nil)
 }
 
 var newClient = rslt.Fmap(fn.Compose(grpc.NewServerClient, grpcutil.ClientToInterface))
