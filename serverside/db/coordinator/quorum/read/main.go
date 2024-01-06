@@ -22,7 +22,7 @@ func newFunc[Key, Data any](
 	readNodesDataToChannel func(context.Context, []quorum.Node[Key, Data]) <-chan Data,
 	latestData func([]Data) Data,
 ) quorum.ReadFunc[Key, Data] {
-	latestDataFromQuorum := latestDataFromQuorumOfNodesFunc[Key, Data](readNodesDataToChannel, latestData)
+	latestDataFromQuorum := latestDataFromQuorumOfNodesFunc(readNodesDataToChannel, latestData)
 
 	return fn.Uncurry(func(ctx context.Context) func(Key) rslt.Of[Data] {
 		return fn.Compose(
@@ -39,7 +39,7 @@ func latestDataFromQuorumOfNodesFunc[Key, Data any](
 
 	return func(ctx context.Context, nodes []quorum.Node[Key, Data]) rslt.Of[Data] {
 		latestDataFromQuorum := fn.Compose3(
-			rslt.Fmap(latestData), quorumOfData(len(nodes)), fn.Ctx(nil, readNodesDataToChannel),
+			rslt.Fmap(latestData), quorumOfData(len(nodes)), fn.Ctx(ctx, readNodesDataToChannel),
 		)
 		return latestDataFromQuorum(nodes)
 	}

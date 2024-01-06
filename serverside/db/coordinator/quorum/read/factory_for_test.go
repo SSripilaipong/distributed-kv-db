@@ -13,6 +13,10 @@ func newFuncWithDiscoveryAndReadNodesDataToChannels[Key, Data any](discovery quo
 	return newFuncWithDiscoveryAndReadNodesDataToChannelsAndLatestData(discovery, readNodesDataToChannel, latestDataDummy[Data])
 }
 
+func newFuncWithReadNodesDataToChannels[Key, Data any](readNodesDataToChannel func(context.Context, []quorum.Node[Key, Data]) <-chan Data) quorum.ReadFunc[Key, Data] {
+	return newFuncWithDiscoveryAndReadNodesDataToChannelsAndLatestData(discoveryDummy[Key, Data](), readNodesDataToChannel, latestDataDummy[Data])
+}
+
 func newFuncWithDiscovery[Key, Data any](discovery quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data] {
 	return newFuncWithDiscoveryAndReadNodesDataToChannels(discovery, readNodesDataToChannelDummy[Key, Data])
 }

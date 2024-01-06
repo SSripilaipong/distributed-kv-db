@@ -22,6 +22,7 @@ func Test_New(t *testing.T) {
 	NodesFuncCaptureContext := nodesFuncCaptureContext[Key, Data]
 	ReadNodesDataToChannelWithResult := readNodesDataToChannelWithResult[Key, Data]
 	NewFuncWithLatestData := newFuncWithLatestData[Key, Data]
+	ReadNodesDataToChannelCaptureContext := readNodesDataToChannelCaptureContext[Key, Data]
 
 	t.Run("should read nodes from discovery with key", func(tt *testing.T) {
 		var key Key
@@ -48,6 +49,14 @@ func Test_New(t *testing.T) {
 			readNodesDataToChannelCaptureNodes(&nodes),
 		))
 		assert.Equal(tt, []Node{NodeMock{1}, NodeMock{2}}, nodes)
+	})
+
+	t.Run("should read nodes data with context", func(tt *testing.T) {
+		var ctx context.Context
+		ReadWithContext(newFuncWithReadNodesDataToChannels(
+			ReadNodesDataToChannelCaptureContext(&ctx),
+		), cntx.WithValue("foo", "bar"))
+		assert.Equal(tt, "bar", ctx.Value("foo"))
 	})
 
 	t.Run("should call read only a quorum of nodes from channels", func(tt *testing.T) {
