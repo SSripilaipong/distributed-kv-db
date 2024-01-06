@@ -5,7 +5,6 @@ import (
 	"distributed-kv-db/common/chn"
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/common/slc"
 	"distributed-kv-db/common/zd"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
@@ -23,21 +22,27 @@ func newFunc[Key, Data any](
 	readNodeDataToChannel func([]quorum.Node[Key, Data]) <-chan Data,
 	latestData func([]Data) Data,
 ) quorum.ReadFunc[Key, Data] {
-	quorumDataOfN := fn.Compose(chn.FirstNFunc[Data], numberOfQuorum)
+	latestDataFromQuorum := latestDataFromQuorumOfNodesFunc[Key, Data](readNodeDataToChannel, latestData)
 
-	return func(ctx context.Context, key Key) rslt.Of[Data] {
-		nodes := discovery.Nodes(ctx, key)
-		quorumData := quorumDataOfN(countResult(nodes))
+	return fn.Uncurry(func(ctx context.Context) func(Key) rslt.Of[Data] {
+		return fn.Compose(
+			rslt.FmapPartial(fn.Ctx(ctx, latestDataFromQuorum)), fn.Ctx(ctx, discovery.Nodes),
+		)
+	})
+}
 
-		latestDataFromQuorum := rslt.FmapPartial(fn.Compose3(
-			rslt.Fmap(latestData), quorumData, readNodeDataToChannel,
-		))
+func latestDataFromQuorumOfNodesFunc[Key, Data any](
+	readNodeDataToChannel func([]quorum.Node[Key, Data]) <-chan Data,
+	latestData func([]Data) Data,
+) func(ctx context.Context, nodes []quorum.Node[Key, Data]) rslt.Of[Data] {
+	quorumOfData := fn.Compose(chn.FirstNFunc[Data], numberOfQuorum)
+
+	return func(ctx context.Context, nodes []quorum.Node[Key, Data]) rslt.Of[Data] {
+		latestDataFromQuorum := fn.Compose3(
+			rslt.Fmap(latestData), quorumOfData(len(nodes)), readNodeDataToChannel,
+		)
 		return latestDataFromQuorum(nodes)
 	}
 }
 
 var numberOfQuorum = fn.Compose(zd.Successor, zd.Half)
-
-func countResult[T any](xs rslt.Of[[]T]) int {
-	return rslt.Resolve(slc.Len[T], fn.Const[error](0), xs)
-}
