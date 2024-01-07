@@ -9,7 +9,7 @@ import (
 
 func Builder(interrupt func() <-chan struct{}) Func {
 	serverFunc := server.New(
-		getvalue.New(readrepair.New[string, string](nil)),
+		getvalue.New(readAdapter(readrepair.New[string, orderableDataAdapter](nil))),
 		setvalue.New(),
 	)
 	return builder(interrupt, serverFunc)

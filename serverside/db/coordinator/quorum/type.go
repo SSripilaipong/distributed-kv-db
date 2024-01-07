@@ -13,3 +13,11 @@ type ReadNode[Key, Data any] interface {
 
 type ReadFunc[Key, Data any] func(context.Context, Key) rslt.Of[Data]
 type WriteFunc[Key, Data any] func(context.Context, Key, Data) error
+
+type Orderable interface {
+	Newness() int
+}
+
+type Hashable interface {
+	Hash() string
+}
