@@ -12,6 +12,11 @@ func Test_latestData(t *testing.T) {
 		result := latestData[orderableDataMock]([]orderableDataMock{})
 		assert.Equal(tt, rslt.Error[orderableDataMock](errors.New("no data")), result)
 	})
+
+	t.Run("should return error if slice is nil", func(tt *testing.T) {
+		result := latestData[orderableDataMock](nil)
+		assert.Equal(tt, rslt.Error[orderableDataMock](errors.New("no data")), result)
+	})
 }
 
 type orderableDataMock struct {
