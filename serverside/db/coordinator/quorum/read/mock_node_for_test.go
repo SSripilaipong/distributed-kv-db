@@ -6,22 +6,7 @@ import (
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/common/typ"
-	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
-
-type nodeWithId[Key, Data any] struct {
-	id int
-}
-
-func newNodeWithId[Key, Data any](id int) nodeWithId[Key, Data] {
-	return nodeWithId[Key, Data]{id: id}
-}
-
-func (n nodeWithId[Key, Data]) Read(_ context.Context, _ Key) rslt.Of[Data] {
-	return rslt.Value(typ.Zero[Data]())
-}
-
-var _ quorum.ReadableNode[int, int] = nodeWithId[int, int]{}
 
 type nodeMock[Key, Data any] struct {
 	read func(context.Context, Key) rslt.Of[Data]

@@ -9,7 +9,7 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/quorum/write"
 )
 
-func New[Key, Data any](discoverNodes quorum.DiscoverNodes[Key, quorum.ReadableNode[Key, Data]]) quorum.ReadFunc[Key, Data] {
+func New[Key, Data any](discoverNodes quorum.DiscoverNodes[Key, quorum.ReadNode[Key, Data]]) quorum.ReadFunc[Key, Data] {
 	return newFunc[Key, Data](
 		read.New(discoverNodes),
 		write.New(discoverNodes),

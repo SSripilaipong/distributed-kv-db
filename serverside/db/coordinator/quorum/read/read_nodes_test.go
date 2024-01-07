@@ -16,14 +16,14 @@ import (
 func Test_readNodesDataToChannel(t *testing.T) {
 	type Key = int
 	type Data = int
-	type Node = quorum.ReadableNode[Key, Data]
+	type Node = quorum.ReadNode[Key, Data]
 	defaultTimeout := 100 * time.Millisecond
 	NodeMock := nodeDummy[Key, Data]
-	ReadWithNodes := readNodesDataToChannelWithNodes[Key, Data]
+	ReadWithNodes := readNodesDataToChannelWithNodes[Key, Data, Node]
 	allInChannel := fn.Bind(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[Data])
 	waitUtilChannelClosed := rslt.OkFunc(fn.Bind(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[Data]))
-	ReadWithContextAndNodes := readNodesDataToChannelWithContextAndNodes[Key, Data]
-	ReadWithKeyAndNodes := readWithKeyAndNodes[Key, Data]
+	ReadWithContextAndNodes := readNodesDataToChannelWithContextAndNodes[Key, Data, Node]
+	ReadWithKeyAndNodes := readWithKeyAndNodes[Key, Data, Node]
 	NodeWithReadFunc := nodeWithReadFunc[Key, Data]
 	ReadFuncCaptureContext := readFuncCaptureContext[Key, Data]
 	ReadFuncCaptureKey := readFuncCaptureKey[Key, Data]

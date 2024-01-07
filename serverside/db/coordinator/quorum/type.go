@@ -7,7 +7,7 @@ import (
 
 type DiscoverNodes[Key, Node any] func(ctx context.Context, key Key) rslt.Of[[]Node]
 
-type ReadableNode[Key, Data any] interface {
+type ReadNode[Key, Data any] interface {
 	Read(context.Context, Key) rslt.Of[Data]
 }
 
