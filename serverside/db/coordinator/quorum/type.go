@@ -19,5 +19,5 @@ type Orderable interface {
 }
 
 type Hashable interface {
-	Hash() string
+	Hash() int
 }

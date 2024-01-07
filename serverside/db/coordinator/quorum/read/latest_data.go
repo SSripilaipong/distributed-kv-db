@@ -17,6 +17,9 @@ func latestData[Data orderableData](xs []Data) rslt.Of[Data] {
 		return rslt.Error[Data](errors.New("no data"))
 	}
 	return rslt.Value(slices.MaxFunc(xs, func(x, y Data) int {
-		return x.Newness() - y.Newness()
+		if newnessDiff := x.Newness() - y.Newness(); newnessDiff != 0 {
+			return newnessDiff
+		}
+		return x.Hash() - y.Newness()
 	}))
 }

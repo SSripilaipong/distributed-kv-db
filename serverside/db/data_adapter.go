@@ -4,7 +4,7 @@ import "distributed-kv-db/serverside/db/coordinator/quorum"
 
 type orderableDataAdapter struct{}
 
-func (d orderableDataAdapter) Hash() string {
+func (d orderableDataAdapter) Hash() int {
 	//TODO implement me
 	panic("implement me")
 }

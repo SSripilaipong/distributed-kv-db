@@ -28,4 +28,13 @@ func Test_latestData(t *testing.T) {
 		})
 		assert.Equal(tt, rslt.Value(orderableDataWithNewness(2)), result)
 	})
+
+	t.Run("should return one with higher hash if newness is the same", func(tt *testing.T) {
+		result := LatestData([]Data{
+			orderableDataWithNewnessAndHash(1, 999),
+			orderableDataWithNewnessAndHash(2, 111),
+			orderableDataWithNewnessAndHash(2, 222),
+		})
+		assert.Equal(tt, rslt.Value(orderableDataWithNewnessAndHash(2, 222)), result)
+	})
 }
