@@ -2,8 +2,8 @@ package read
 
 import (
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/common/typ"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
+	"errors"
 )
 
 type orderableData interface {
@@ -12,5 +12,5 @@ type orderableData interface {
 }
 
 func latestData[Data orderableData](_ []Data) rslt.Of[Data] {
-	return rslt.Value(typ.Zero[Data]())
+	return rslt.Error[Data](errors.New("no data"))
 }
