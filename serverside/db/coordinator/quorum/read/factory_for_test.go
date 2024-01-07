@@ -24,3 +24,7 @@ func newFuncWithDiscovery[Key, Data any](discovery quorum.Discovery[Key, Data]) 
 func newFuncWithLatestData[Key, Data any](latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
 	return newFunc(discoveryDummy[Key, Data](), readNodesDataToChannelDummy[Key, Data], latestData)
 }
+
+func readNodesDataToChannelWithNodes[Key, Data any](nodes []quorum.Node[Key, Data]) <-chan Data {
+	return readNodesDataToChannel[Key, Data](context.Background(), nodes)
+}

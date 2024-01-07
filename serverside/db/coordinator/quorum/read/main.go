@@ -12,7 +12,7 @@ import (
 func New[Key, Data any](discovery quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data] {
 	return newFunc(
 		discovery,
-		nil, // TODO inject this
+		readNodesDataToChannel[Key, Data],
 		nil, // TODO inject this
 	)
 }

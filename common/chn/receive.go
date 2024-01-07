@@ -1,9 +1,25 @@
 package chn
 
 import (
+	"context"
 	"distributed-kv-db/common/rslt"
 	"errors"
 )
+
+func AllWithCtx[T any](ctx context.Context, ch <-chan T) rslt.Of[[]T] {
+	var xs []T
+	for {
+		select {
+		case x, ok := <-ch:
+			if !ok {
+				return rslt.Value(xs)
+			}
+			xs = append(xs, x)
+		case <-ctx.Done():
+			return rslt.Error[[]T](errors.New("context is done"))
+		}
+	}
+}
 
 func ReceiveNoWait[T any](ch <-chan T) rslt.Of[T] {
 	select {
