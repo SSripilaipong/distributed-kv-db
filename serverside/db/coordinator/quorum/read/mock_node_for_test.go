@@ -2,6 +2,8 @@ package read
 
 import (
 	"context"
+	"distributed-kv-db/common/cntx"
+	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/common/typ"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
@@ -53,4 +55,8 @@ func readFuncCaptureKey[Key, Data any](key *Key) func(context.Context, Key) rslt
 		*key = k
 		return rslt.Value(typ.Zero[Data]())
 	}
+}
+
+func readFuncWithResult[Key, Data any](result rslt.Of[Data]) func(context.Context, Key) rslt.Of[Data] {
+	return cntx.Func(fn.Const[Key](result))
 }
