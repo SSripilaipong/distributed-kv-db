@@ -20,6 +20,13 @@ func readNodesDataToChannelCaptureContext[Key, Data any](ctx *context.Context) f
 	}
 }
 
+func readNodesDataToChannelCaptureKey[Key, Data any](key *Key) func(context.Context, Key, []quorum.Node[Key, Data]) <-chan Data {
+	return func(_ context.Context, k Key, _ []quorum.Node[Key, Data]) <-chan Data {
+		*key = k
+		return chn.Repeat(typ.Zero[Data]())
+	}
+}
+
 func readNodesDataToChannelCaptureNodes[Key, Data any](nodes *[]quorum.Node[Key, Data]) func(context.Context, Key, []quorum.Node[Key, Data]) <-chan Data {
 	return func(_ context.Context, _ Key, n []quorum.Node[Key, Data]) <-chan Data {
 		*nodes = n
