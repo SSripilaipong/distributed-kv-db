@@ -21,7 +21,7 @@ func (n nodeWithId[Key, Data]) Read(_ context.Context, _ Key) rslt.Of[Data] {
 	return rslt.Value(typ.Zero[Data]())
 }
 
-var _ quorum.Node[int, int] = nodeWithId[int, int]{}
+var _ quorum.ReadableNode[int, int] = nodeWithId[int, int]{}
 
 type nodeMock[Key, Data any] struct {
 	read func(context.Context, Key) rslt.Of[Data]

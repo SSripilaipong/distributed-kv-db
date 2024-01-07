@@ -6,34 +6,34 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
 
-func newFuncWithDiscoveryAndReadNodesDataToChannelsAndLatestData[Key, Data any](discovery quorum.Discovery[Key, Data], readNodesDataToChannel func(context.Context, Key, []quorum.Node[Key, Data]) <-chan Data, latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
-	return newFunc(discovery, readNodesDataToChannel, latestData)
+func newFuncWithDiscoverNodesAndReadNodesDataToChannelsAndLatestData[Key, Data any](discoverNodes quorum.DiscoverNodes[Key, quorum.ReadableNode[Key, Data]], readNodesDataToChannel func(context.Context, Key, []quorum.ReadableNode[Key, Data]) <-chan Data, latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
+	return newFunc(discoverNodes, readNodesDataToChannel, latestData)
 }
 
-func newFuncWithDiscoveryAndReadNodesDataToChannels[Key, Data any](discovery quorum.Discovery[Key, Data], readNodesDataToChannel func(context.Context, Key, []quorum.Node[Key, Data]) <-chan Data) quorum.ReadFunc[Key, Data] {
-	return newFuncWithDiscoveryAndReadNodesDataToChannelsAndLatestData(discovery, readNodesDataToChannel, latestDataDummy[Data])
+func newFuncWithDiscoverNodesAndReadNodesDataToChannels[Key, Data any](discoverNodes quorum.DiscoverNodes[Key, quorum.ReadableNode[Key, Data]], readNodesDataToChannel func(context.Context, Key, []quorum.ReadableNode[Key, Data]) <-chan Data) quorum.ReadFunc[Key, Data] {
+	return newFuncWithDiscoverNodesAndReadNodesDataToChannelsAndLatestData(discoverNodes, readNodesDataToChannel, latestDataDummy[Data])
 }
 
-func newFuncWithReadNodesDataToChannels[Key, Data any](readNodesDataToChannel func(context.Context, Key, []quorum.Node[Key, Data]) <-chan Data) quorum.ReadFunc[Key, Data] {
-	return newFuncWithDiscoveryAndReadNodesDataToChannelsAndLatestData(discoveryDummy[Key, Data](), readNodesDataToChannel, latestDataDummy[Data])
+func newFuncWithReadNodesDataToChannels[Key, Data any](readNodesDataToChannel func(context.Context, Key, []quorum.ReadableNode[Key, Data]) <-chan Data) quorum.ReadFunc[Key, Data] {
+	return newFuncWithDiscoverNodesAndReadNodesDataToChannelsAndLatestData(discoverNodesFuncDummy[Key, Data], readNodesDataToChannel, latestDataDummy[Data])
 }
 
-func newFuncWithDiscovery[Key, Data any](discovery quorum.Discovery[Key, Data]) quorum.ReadFunc[Key, Data] {
-	return newFuncWithDiscoveryAndReadNodesDataToChannels(discovery, readNodesDataToChannelDummy[Key, Data])
+func newFuncWithDiscoverNodes[Key, Data any](discoverNodes quorum.DiscoverNodes[Key, quorum.ReadableNode[Key, Data]]) quorum.ReadFunc[Key, Data] {
+	return newFuncWithDiscoverNodesAndReadNodesDataToChannels(discoverNodes, readNodesDataToChannelDummy[Key, Data])
 }
 
 func newFuncWithLatestData[Key, Data any](latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
-	return newFunc(discoveryDummy[Key, Data](), readNodesDataToChannelDummy[Key, Data], latestData)
+	return newFunc(discoverNodesFuncDummy[Key, Data], readNodesDataToChannelDummy[Key, Data], latestData)
 }
 
-func readNodesDataToChannelWithNodes[Key, Data any](nodes []quorum.Node[Key, Data]) <-chan Data {
+func readNodesDataToChannelWithNodes[Key, Data any](nodes []quorum.ReadableNode[Key, Data]) <-chan Data {
 	return readNodesDataToChannelWithContextAndNodes(context.Background(), nodes)
 }
 
-func readNodesDataToChannelWithContextAndNodes[Key, Data any](ctx context.Context, nodes []quorum.Node[Key, Data]) <-chan Data {
+func readNodesDataToChannelWithContextAndNodes[Key, Data any](ctx context.Context, nodes []quorum.ReadableNode[Key, Data]) <-chan Data {
 	return readNodesDataToChannel[Key, Data](ctx, typ.Zero[Key](), nodes)
 }
 
-func readWithKeyAndNodes[Key, Data any](key Key, nodes []quorum.Node[Key, Data]) <-chan Data {
+func readWithKeyAndNodes[Key, Data any](key Key, nodes []quorum.ReadableNode[Key, Data]) <-chan Data {
 	return readNodesDataToChannel[Key, Data](context.Background(), key, nodes)
 }

@@ -12,7 +12,7 @@ import (
 	"sync"
 )
 
-func readNodesDataToChannel[Key, Data any](ctx context.Context, key Key, nodes []quorum.Node[Key, Data]) <-chan Data {
+func readNodesDataToChannel[Key, Data any](ctx context.Context, key Key, nodes []quorum.ReadableNode[Key, Data]) <-chan Data {
 	var wg sync.WaitGroup
 	wg.Add(len(nodes))
 	ch := make(chan Data, len(nodes))
@@ -23,14 +23,14 @@ func readNodesDataToChannel[Key, Data any](ctx context.Context, key Key, nodes [
 	return ch
 }
 
-func readNodeDataToChannel[Key, Data any](ctx context.Context, wg *sync.WaitGroup, ch chan<- Data, key Key) func(node quorum.Node[Key, Data]) {
+func readNodeDataToChannel[Key, Data any](ctx context.Context, wg *sync.WaitGroup, ch chan<- Data, key Key) func(node quorum.ReadableNode[Key, Data]) {
 	return fn.Do(wgrp.MustDone(wg, fn.Compose(
 		rslt.Fmap(chn.SendToWithContext(ctx, ch)), readNode[Data](ctx, key),
 	)))
 }
 
-func readNode[Data, Key any](ctx context.Context, key Key) func(node quorum.Node[Key, Data]) rslt.Of[Data] {
-	return func(node quorum.Node[Key, Data]) rslt.Of[Data] {
+func readNode[Data, Key any](ctx context.Context, key Key) func(node quorum.ReadableNode[Key, Data]) rslt.Of[Data] {
+	return func(node quorum.ReadableNode[Key, Data]) rslt.Of[Data] {
 		return node.Read(ctx, key)
 	}
 }

@@ -5,11 +5,9 @@ import (
 	"distributed-kv-db/common/rslt"
 )
 
-type Discovery[Key, Data any] interface {
-	Nodes(ctx context.Context, key Key) rslt.Of[[]Node[Key, Data]]
-}
+type DiscoverNodes[Key, Node any] func(ctx context.Context, key Key) rslt.Of[[]Node]
 
-type Node[Key, Data any] interface {
+type ReadableNode[Key, Data any] interface {
 	Read(context.Context, Key) rslt.Of[Data]
 }
 

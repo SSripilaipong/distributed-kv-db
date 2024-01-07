@@ -13,41 +13,41 @@ import (
 func Test_New(t *testing.T) {
 	type Key = int
 	type Data = int
-	type Node = quorum.Node[Key, Data]
+	type Node = quorum.ReadableNode[Key, Data]
 	NodeDummy := nodeDummy[Key, Data]
 	NodeWithId := newNodeWithId[Key, Data]
 	Read := read[Key, Data]
 	ReadWithContext := readWithContext[Key, Data]
 	ReadWithKey := readWithKey[Key, Data]
-	NodesFuncCaptureKey := nodesFuncCaptureKey[Key, Data]
-	NodesFuncCaptureContext := nodesFuncCaptureContext[Key, Data]
+	NodesFuncCaptureKey := discoverNodesFuncCaptureKey[Key, Data]
+	NodesFuncCaptureContext := discoverNodesFuncCaptureContext[Key, Data]
 	ReadNodesDataToChannelWithResult := readNodesDataToChannelWithResult[Key, Data]
 	NewFuncWithLatestData := newFuncWithLatestData[Key, Data]
 	ReadNodesDataToChannelCaptureContext := readNodesDataToChannelCaptureContext[Key, Data]
 	ReadNodesDataToChannelCaptureKey := readNodesDataToChannelCaptureKey[Key, Data]
 
-	t.Run("should read nodes from discovery with key", func(tt *testing.T) {
+	t.Run("should read nodes from discoverNodes with key", func(tt *testing.T) {
 		var key Key
 		ReadWithKey(
-			newFuncWithDiscovery(discoveryWithNodesFunc(NodesFuncCaptureKey(&key))),
+			newFuncWithDiscoverNodes(NodesFuncCaptureKey(&key)),
 			123,
 		)
 		assert.Equal(tt, 123, key)
 	})
 
-	t.Run("should read nodes from discovery with context", func(tt *testing.T) {
+	t.Run("should read nodes from discoverNodes with context", func(tt *testing.T) {
 		var ctx context.Context
 		ReadWithContext(
-			newFuncWithDiscovery(discoveryWithNodesFunc(NodesFuncCaptureContext(&ctx))),
+			newFuncWithDiscoverNodes(NodesFuncCaptureContext(&ctx)),
 			cntx.WithValue("code name", "007"),
 		)
 		assert.Equal(tt, "007", ctx.Value("code name"))
 	})
 
-	t.Run("should call read nodes from discovery to channel", func(tt *testing.T) {
+	t.Run("should call read nodes from discoverNodes to channel", func(tt *testing.T) {
 		var nodes []Node
-		Read(newFuncWithDiscoveryAndReadNodesDataToChannels(
-			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeWithId(1), NodeWithId(2)}))),
+		Read(newFuncWithDiscoverNodesAndReadNodesDataToChannels(
+			discoverNodesFuncWithResult(rslt.Value([]Node{NodeWithId(1), NodeWithId(2)})),
 			readNodesDataToChannelCaptureNodes(&nodes),
 		))
 		assert.Equal(tt, []Node{NodeWithId(1), NodeWithId(2)}, nodes)
@@ -71,8 +71,8 @@ func Test_New(t *testing.T) {
 
 	t.Run("should call read only a quorum of nodes from channels", func(tt *testing.T) {
 		dataChan := chn.NewFromSlice([]Data{11, 12, 13})
-		Read(newFuncWithDiscoveryAndReadNodesDataToChannels(
-			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeDummy(), NodeDummy(), NodeDummy()}))),
+		Read(newFuncWithDiscoverNodesAndReadNodesDataToChannels(
+			discoverNodesFuncWithResult(rslt.Value([]Node{NodeDummy(), NodeDummy(), NodeDummy()})),
 			ReadNodesDataToChannelWithResult(dataChan),
 		))
 		assert.Equal(tt, rslt.Value(13), chn.ReceiveNoWait(dataChan)) // remaining data
@@ -80,8 +80,8 @@ func Test_New(t *testing.T) {
 
 	t.Run("should find latest data with a quorum of data", func(tt *testing.T) {
 		var xs []Data
-		Read(newFuncWithDiscoveryAndReadNodesDataToChannelsAndLatestData(
-			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeDummy(), NodeDummy(), NodeDummy()}))),
+		Read(newFuncWithDiscoverNodesAndReadNodesDataToChannelsAndLatestData(
+			discoverNodesFuncWithResult(rslt.Value([]Node{NodeDummy(), NodeDummy(), NodeDummy()})),
 			ReadNodesDataToChannelWithResult(chn.NewFromSlice([]Data{123, 456, 0})),
 			latestDataCaptureXs(&xs),
 		))

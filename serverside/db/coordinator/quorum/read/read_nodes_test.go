@@ -16,7 +16,7 @@ import (
 func Test_readNodesDataToChannel(t *testing.T) {
 	type Key = int
 	type Data = int
-	type Node = quorum.Node[Key, Data]
+	type Node = quorum.ReadableNode[Key, Data]
 	defaultTimeout := 100 * time.Millisecond
 	NodeMock := nodeDummy[Key, Data]
 	ReadWithNodes := readNodesDataToChannelWithNodes[Key, Data]
