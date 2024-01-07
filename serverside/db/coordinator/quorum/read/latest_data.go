@@ -4,6 +4,7 @@ import (
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 	"errors"
+	"slices"
 )
 
 type orderableData interface {
@@ -11,6 +12,11 @@ type orderableData interface {
 	quorum.Hashable
 }
 
-func latestData[Data orderableData](_ []Data) rslt.Of[Data] {
-	return rslt.Error[Data](errors.New("no data"))
+func latestData[Data orderableData](xs []Data) rslt.Of[Data] {
+	if len(xs) == 0 {
+		return rslt.Error[Data](errors.New("no data"))
+	}
+	return rslt.Value(slices.MaxFunc(xs, func(x, y Data) int {
+		return x.Newness() - y.Newness()
+	}))
 }

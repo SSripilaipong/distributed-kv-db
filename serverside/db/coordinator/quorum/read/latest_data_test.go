@@ -8,26 +8,24 @@ import (
 )
 
 func Test_latestData(t *testing.T) {
+	type Data = orderableDataMock
+	LatestData := latestData[Data]
 	t.Run("should return error if slice is empty", func(tt *testing.T) {
-		result := latestData[orderableDataMock]([]orderableDataMock{})
-		assert.Equal(tt, rslt.Error[orderableDataMock](errors.New("no data")), result)
+		result := LatestData([]Data{})
+		assert.Equal(tt, rslt.Error[Data](errors.New("no data")), result)
 	})
 
 	t.Run("should return error if slice is nil", func(tt *testing.T) {
-		result := latestData[orderableDataMock](nil)
-		assert.Equal(tt, rslt.Error[orderableDataMock](errors.New("no data")), result)
+		result := LatestData(nil)
+		assert.Equal(tt, rslt.Error[Data](errors.New("no data")), result)
 	})
-}
 
-type orderableDataMock struct {
-}
-
-func (d orderableDataMock) Newness() int {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (d orderableDataMock) Hash() string {
-	//TODO implement me
-	panic("implement me")
+	t.Run("should return newest data", func(tt *testing.T) {
+		result := LatestData([]Data{
+			orderableDataWithNewness(1),
+			orderableDataWithNewness(2),
+			orderableDataWithNewness(0),
+		})
+		assert.Equal(tt, rslt.Value(orderableDataWithNewness(2)), result)
+	})
 }
