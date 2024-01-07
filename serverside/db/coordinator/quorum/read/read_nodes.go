@@ -2,7 +2,6 @@ package read
 
 import (
 	"context"
-	"distributed-kv-db/common/typ"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
 
@@ -10,7 +9,7 @@ func readNodesDataToChannel[Key, Data any](ctx context.Context, key Key, nodes [
 	ch := make(chan Data)
 	close(ch)
 	for _, node := range nodes {
-		node.Read(ctx, typ.Zero[Key]())
+		node.Read(ctx, key)
 	}
 	return ch
 }

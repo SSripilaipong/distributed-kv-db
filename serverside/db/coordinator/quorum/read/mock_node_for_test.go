@@ -47,3 +47,10 @@ func readFuncCaptureContext[Key, Data any](ctx *context.Context) func(context.Co
 		return rslt.Value(typ.Zero[Data]())
 	}
 }
+
+func readFuncCaptureKey[Key, Data any](key *Key) func(context.Context, Key) rslt.Of[Data] {
+	return func(_ context.Context, k Key) rslt.Of[Data] {
+		*key = k
+		return rslt.Value(typ.Zero[Data]())
+	}
+}

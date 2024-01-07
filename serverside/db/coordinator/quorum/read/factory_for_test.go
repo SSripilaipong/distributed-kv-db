@@ -33,3 +33,7 @@ func readNodesDataToChannelWithNodes[Key, Data any](nodes []quorum.Node[Key, Dat
 func readNodesDataToChannelWithContextAndNodes[Key, Data any](ctx context.Context, nodes []quorum.Node[Key, Data]) <-chan Data {
 	return readNodesDataToChannel[Key, Data](ctx, typ.Zero[Key](), nodes)
 }
+
+func readWithKeyAndNodes[Key, Data any](key Key, nodes []quorum.Node[Key, Data]) <-chan Data {
+	return readNodesDataToChannel[Key, Data](context.Background(), key, nodes)
+}

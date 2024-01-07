@@ -20,8 +20,10 @@ func Test_readNodesDataToChannel(t *testing.T) {
 	ReadWithNodes := readNodesDataToChannelWithNodes[Key, Data]
 	allInChannel := fn.Bind(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[Data])
 	ReadWithContextAndNodes := readNodesDataToChannelWithContextAndNodes[Key, Data]
+	ReadWithKeyAndNodes := readWithKeyAndNodes[Key, Data]
 	NodeWithReadFunc := nodeWithReadFunc[Key, Data]
 	ReadFuncCaptureContext := readFuncCaptureContext[Key, Data]
+	ReadFuncCaptureKey := readFuncCaptureKey[Key, Data]
 
 	t.Run("should close channel after all nodes read", func(tt *testing.T) {
 		ch := ReadWithNodes([]Node{NodeMock()})
@@ -39,5 +41,18 @@ func Test_readNodesDataToChannel(t *testing.T) {
 		)
 		assert.Equal(tt, "bbb", ctx1.Value("aaa"))
 		assert.Equal(tt, "bbb", ctx2.Value("aaa"))
+	})
+
+	t.Run("should read all nodes with key", func(tt *testing.T) {
+		var key1, key2 Key
+		ReadWithKeyAndNodes(
+			555,
+			[]Node{
+				NodeWithReadFunc(ReadFuncCaptureKey(&key1)),
+				NodeWithReadFunc(ReadFuncCaptureKey(&key2)),
+			},
+		)
+		assert.Equal(tt, 555, key1)
+		assert.Equal(tt, 555, key2)
 	})
 }
