@@ -9,18 +9,18 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
 
-func New[Key, Data any, Node quorum.ReadNode[Key, Data]](discoverNodes quorum.DiscoverNodes[Key, Node]) quorum.ReadFunc[Key, Data] {
+func New[Key any, Data orderableData, Node quorum.ReadNode[Key, Data]](discoverNodes quorum.DiscoverNodes[Key, Node]) quorum.ReadFunc[Key, Data] {
 	return newFunc(
 		discoverNodes,
 		readNodesDataToChannel[Key, Data, Node],
-		nil, // TODO inject this
+		latestData[Data],
 	)
 }
 
 func newFunc[Key, Data, Node any](
 	discoverNodes quorum.DiscoverNodes[Key, Node],
 	readNodesDataToChannel func(context.Context, Key, []Node) <-chan Data,
-	latestData func([]Data) Data,
+	latestData func([]Data) rslt.Of[Data],
 ) quorum.ReadFunc[Key, Data] {
 	latestDataFromQuorum := latestDataFromQuorumOfNodesFunc(readNodesDataToChannel, latestData)
 
@@ -33,13 +33,13 @@ func newFunc[Key, Data, Node any](
 
 func latestDataFromQuorumOfNodesFunc[Key, Data, Node any](
 	readNodesDataToChannel func(context.Context, Key, []Node) <-chan Data,
-	latestData func([]Data) Data,
+	latestData func([]Data) rslt.Of[Data],
 ) func(context.Context, Key, []Node) rslt.Of[Data] {
 	quorumOfData := fn.Compose(chn.FirstNFunc[Data], numberOfQuorum)
 
 	return func(ctx context.Context, key Key, nodes []Node) rslt.Of[Data] {
 		return fn.Compose3(
-			rslt.Fmap(latestData), quorumOfData(len(nodes)), fn.Bind2(ctx, key, readNodesDataToChannel),
+			rslt.FmapPartial(latestData), quorumOfData(len(nodes)), fn.Bind2(ctx, key, readNodesDataToChannel),
 		)(nodes)
 	}
 }

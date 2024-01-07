@@ -2,11 +2,12 @@ package read
 
 import (
 	"context"
+	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/common/typ"
 	"distributed-kv-db/serverside/db/coordinator/quorum"
 )
 
-func newFuncWithDiscoverNodesAndReadNodesDataToChannelsAndLatestData[Key, Data, Node any](discoverNodes quorum.DiscoverNodes[Key, Node], readNodesDataToChannel func(context.Context, Key, []Node) <-chan Data, latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
+func newFuncWithDiscoverNodesAndReadNodesDataToChannelsAndLatestData[Key, Data, Node any](discoverNodes quorum.DiscoverNodes[Key, Node], readNodesDataToChannel func(context.Context, Key, []Node) <-chan Data, latestData func([]Data) rslt.Of[Data]) quorum.ReadFunc[Key, Data] {
 	return newFunc(discoverNodes, readNodesDataToChannel, latestData)
 }
 
@@ -22,7 +23,7 @@ func newFuncWithDiscoverNodes[Key, Data, Node any](discoverNodes quorum.Discover
 	return newFuncWithDiscoverNodesAndReadNodesDataToChannels(discoverNodes, readNodesDataToChannelDummy[Key, Data, Node])
 }
 
-func newFuncWithLatestData[Key, Data, Node any](latestData func([]Data) Data) quorum.ReadFunc[Key, Data] {
+func newFuncWithLatestData[Key, Data, Node any](latestData func([]Data) rslt.Of[Data]) quorum.ReadFunc[Key, Data] {
 	return newFunc(discoverNodesFuncDummy[Key, Node], readNodesDataToChannelDummy[Key, Data, Node], latestData)
 }
 
