@@ -27,5 +27,9 @@ func newFuncWithLatestData[Key, Data any](latestData func([]Data) Data) quorum.R
 }
 
 func readNodesDataToChannelWithNodes[Key, Data any](nodes []quorum.Node[Key, Data]) <-chan Data {
-	return readNodesDataToChannel[Key, Data](context.Background(), typ.Zero[Key](), nodes)
+	return readNodesDataToChannelWithContextAndNodes(context.Background(), nodes)
+}
+
+func readNodesDataToChannelWithContextAndNodes[Key, Data any](ctx context.Context, nodes []quorum.Node[Key, Data]) <-chan Data {
+	return readNodesDataToChannel[Key, Data](ctx, typ.Zero[Key](), nodes)
 }

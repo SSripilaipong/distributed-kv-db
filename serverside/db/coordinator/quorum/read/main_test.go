@@ -14,7 +14,8 @@ func Test_New(t *testing.T) {
 	type Key = int
 	type Data = int
 	type Node = quorum.Node[Key, Data]
-	type NodeMock = nodeWithId[Key, Data]
+	NodeDummy := nodeDummy[Key, Data]
+	NodeWithId := newNodeWithId[Key, Data]
 	Read := read[Key, Data]
 	ReadWithContext := readWithContext[Key, Data]
 	ReadWithKey := readWithKey[Key, Data]
@@ -46,10 +47,10 @@ func Test_New(t *testing.T) {
 	t.Run("should call read nodes from discovery to channel", func(tt *testing.T) {
 		var nodes []Node
 		Read(newFuncWithDiscoveryAndReadNodesDataToChannels(
-			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{1}, NodeMock{2}}))),
+			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeWithId(1), NodeWithId(2)}))),
 			readNodesDataToChannelCaptureNodes(&nodes),
 		))
-		assert.Equal(tt, []Node{NodeMock{1}, NodeMock{2}}, nodes)
+		assert.Equal(tt, []Node{NodeWithId(1), NodeWithId(2)}, nodes)
 	})
 
 	t.Run("should read nodes data with context", func(tt *testing.T) {
@@ -71,7 +72,7 @@ func Test_New(t *testing.T) {
 	t.Run("should call read only a quorum of nodes from channels", func(tt *testing.T) {
 		dataChan := chn.NewFromSlice([]Data{11, 12, 13})
 		Read(newFuncWithDiscoveryAndReadNodesDataToChannels(
-			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{}, NodeMock{}, NodeMock{}}))),
+			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeDummy(), NodeDummy(), NodeDummy()}))),
 			ReadNodesDataToChannelWithResult(dataChan),
 		))
 		assert.Equal(tt, rslt.Value(13), chn.ReceiveNoWait(dataChan)) // remaining data
@@ -80,7 +81,7 @@ func Test_New(t *testing.T) {
 	t.Run("should find latest data with a quorum of data", func(tt *testing.T) {
 		var xs []Data
 		Read(newFuncWithDiscoveryAndReadNodesDataToChannelsAndLatestData(
-			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeMock{}, NodeMock{}, NodeMock{}}))),
+			discoveryWithNodesFunc(nodesFuncWithResult(rslt.Value([]Node{NodeDummy(), NodeDummy(), NodeDummy()}))),
 			ReadNodesDataToChannelWithResult(chn.NewFromSlice([]Data{123, 456, 0})),
 			latestDataCaptureXs(&xs),
 		))
