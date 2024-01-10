@@ -12,21 +12,21 @@ import (
 func New[Key any, Data orderableData, Node quorum.ReadNode[Key, Data]](discoverNodes quorum.DiscoverNodes[Key, Node]) quorum.ReadFunc[Key, Data] {
 	return newFunc(
 		discoverNodes,
-		readNodesDataToChannel[Key, Data, Node],
+		nil,
 		latestData[Data],
 	)
 }
 
 func newFunc[Key, Data, Node any](
 	discoverNodes quorum.DiscoverNodes[Key, Node],
-	readNodesDataToChannel func(context.Context, Key, []Node) <-chan Data,
+	readQuorumOfNodesData func(context.Context, Key, []Node) rslt.Of[[]Data],
 	latestData func([]Data) rslt.Of[Data],
 ) quorum.ReadFunc[Key, Data] {
-	latestDataFromQuorum := latestDataFromQuorumOfNodesFunc(readNodesDataToChannel, latestData)
-
 	return func(ctx context.Context, key Key) rslt.Of[Data] {
-		return fn.Compose(
-			rslt.FmapPartial(fn.Bind2(ctx, key, latestDataFromQuorum)), fn.Ctx(ctx, discoverNodes),
+		readQuorumData := fn.Bind2(ctx, key, readQuorumOfNodesData)
+
+		return fn.Compose3(
+			rslt.FmapPartial(latestData), rslt.FmapPartial(readQuorumData), fn.Ctx(ctx, discoverNodes),
 		)(key)
 	}
 }
