@@ -25,4 +25,9 @@ func Test_ChannelToSlice(t *testing.T) {
 		result := channelToSlice(3)(chn.NewFromSlice([]T{1, 2, 3}))
 		assert.Equal(tt, rslt.Value([]T{1, 2}), result)
 	})
+
+	t.Run("should return error if channel is closed before all data are collected", func(tt *testing.T) {
+		result := channelToSlice(3)(chn.NewFromSlice([]T{1}))
+		assert.Equal(tt, rslt.Error[[]T](errors.New("channel closed")), result)
+	})
 }
