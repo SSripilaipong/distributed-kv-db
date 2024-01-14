@@ -13,7 +13,7 @@ func Test_ChannelToSlice(t *testing.T) {
 	channelToSlice := ChannelToSlice[T]
 
 	t.Run("should return error if n is less than 1", func(tt *testing.T) {
-		assert.Equal(tt, rslt.Error[[]T](errors.New("n must be more than 0")), channelToSlice(0)(chn.NewFromSlice([]T{})))
+		assert.Equal(tt, rslt.Error[[]T](errors.New("n must be more than 0, got 0")), channelToSlice(0)(chn.NewFromSlice([]T{})))
 	})
 
 	t.Run("should return first element if n is 1", func(tt *testing.T) {
