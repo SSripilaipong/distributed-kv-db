@@ -15,3 +15,12 @@ func requestCaptureAllNode[Node, Data any](allNode *[]Node) func(Node) rslt.Of[D
 		return requestDummy[Node, Data](node)
 	}
 }
+
+func requestWithAllResult[Node, Data any](allResult []Data) func(Node) rslt.Of[Data] {
+	var i int
+	return func(node Node) rslt.Of[Data] {
+		v := allResult[i]
+		i++
+		return rslt.Value(v)
+	}
+}
