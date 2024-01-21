@@ -15,3 +15,9 @@ func nodesToChannelForTest[Node, Data any](options ...func(deps *nodesToChannelT
 	}, options)
 	return NodesToChannel[Node, Data](deps.request)
 }
+
+func withRequest[Node, Data any](request func(Node) rslt.Of[Data]) func(deps *nodesToChannelTestDeps[Node, Data]) {
+	return func(deps *nodesToChannelTestDeps[Node, Data]) {
+		deps.request = request
+	}
+}

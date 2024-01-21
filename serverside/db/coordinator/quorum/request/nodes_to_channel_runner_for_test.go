@@ -15,3 +15,9 @@ func runNodesToChannelForTest[Node, Data any](
 	}, options)
 	return f(deps.nodes)
 }
+
+func withNodes[Node any](nodes []Node) func(deps *nodeToChannelsTestRunnerDeps[Node]) {
+	return func(deps *nodeToChannelsTestRunnerDeps[Node]) {
+		deps.nodes = nodes
+	}
+}
