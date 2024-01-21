@@ -8,25 +8,29 @@ import (
 )
 
 type nodesToDataSliceTestRunnerDeps[Key, Node any] struct {
-	ctx   context.Context
-	key   Key
-	nodes []Node
+	ctx context.Context
+	key Key
 }
 
 func runNodesToDataSliceForTest[Key, Data, Node any](
-	f func(ctx context.Context, key Key, nodes []Node) rslt.Of[[]Data],
+	f func(ctx context.Context, key Key) rslt.Of[[]Data],
 	options ...func(*nodesToDataSliceTestRunnerDeps[Key, Node]),
 ) rslt.Of[[]Data] {
 	deps := fnopts.Apply(nodesToDataSliceTestRunnerDeps[Key, Node]{
-		ctx:   context.Background(),
-		key:   typ.Zero[Key](),
-		nodes: []Node{},
+		ctx: context.Background(),
+		key: typ.Zero[Key](),
 	}, options)
-	return f(deps.ctx, deps.key, deps.nodes)
+	return f(deps.ctx, deps.key)
 }
 
 func withKey[Key, Node any](key Key) func(*nodesToDataSliceTestRunnerDeps[Key, Node]) {
 	return func(deps *nodesToDataSliceTestRunnerDeps[Key, Node]) {
 		deps.key = key
+	}
+}
+
+func withContext[Key, Node any](ctx context.Context) func(*nodesToDataSliceTestRunnerDeps[Key, Node]) {
+	return func(deps *nodesToDataSliceTestRunnerDeps[Key, Node]) {
+		deps.ctx = ctx
 	}
 }
