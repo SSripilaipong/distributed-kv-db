@@ -12,3 +12,10 @@ func readNodesCaptureNodes[Key, Data, Node any](nodes *[]Node) func(ctx context.
 		return readNodesDummy[Key, Data, Node](c, k, n)
 	}
 }
+
+func readNodesCaptureKey[Key, Data, Node any](key *Key) func(ctx context.Context, key Key, nodes []Node) <-chan Data {
+	return func(c context.Context, k Key, n []Node) <-chan Data {
+		*key = k
+		return readNodesDummy[Key, Data, Node](c, k, n)
+	}
+}

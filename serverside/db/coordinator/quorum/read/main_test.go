@@ -19,6 +19,7 @@ func Test_NodesToDataSlice(t *testing.T) {
 	DiscoverNodesCaptureContext := discoverNodesCaptureContext[Key, Node]
 	DiscoverNodesWithResult := discoverNodesWithResult[Key, Node]
 	ReadNodesCaptureNodes := readNodesCaptureNodes[Key, Data, Node]
+	ReadNodesCaptureKey := readNodesCaptureKey[Key, Data, Node]
 	Execute := runNodesToDataSliceForTest[Key, Data, Node]
 	WithKey := withKey[Key, Node]
 	WithContext := withContext[Key, Node]
@@ -57,5 +58,14 @@ func Test_NodesToDataSlice(t *testing.T) {
 			WithReadNodes(ReadNodesCaptureNodes(&nodes)),
 		))
 		assert.Equal(tt, []Node{"node1", "node2"}, nodes)
+	})
+
+	t.Run("should read nodes with key", func(tt *testing.T) {
+		var key Key
+		Execute(
+			Target(WithReadNodes(ReadNodesCaptureKey(&key))),
+			WithKey(555),
+		)
+		assert.Equal(tt, Key(555), key)
 	})
 }
