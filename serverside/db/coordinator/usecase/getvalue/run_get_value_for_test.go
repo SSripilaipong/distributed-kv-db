@@ -3,17 +3,16 @@ package getvalue
 import (
 	"context"
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/serverside/db/coordinator"
 )
 
-func getValueWithRequest(getValue coordinator.GetValueFunc, request coordinator.GetValueRequest) {
+func getValueWithRequest(getValue Func, request Request) {
 	getValue(context.Background(), request)
 }
 
-func getValueWithContext(getValue coordinator.GetValueFunc, ctx context.Context) {
-	getValue(ctx, coordinator.GetValueRequest{})
+func getValueWithContext(getValue Func, ctx context.Context) {
+	getValue(ctx, Request{})
 }
 
-func getValueWithResponse(getValue coordinator.GetValueFunc) rslt.Of[coordinator.GetValueResponse] {
-	return getValue(context.Background(), coordinator.GetValueRequest{})
+func getValueWithResponse(getValue Func) rslt.Of[Response] {
+	return getValue(context.Background(), Request{})
 }

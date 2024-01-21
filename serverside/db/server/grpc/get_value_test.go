@@ -3,7 +3,8 @@ package grpc
 import (
 	"distributed-kv-db/api/grpc"
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/serverside/db/coordinator"
+	usecaseError "distributed-kv-db/serverside/db/coordinator/usecase/error"
+	"distributed-kv-db/serverside/db/coordinator/usecase/getvalue"
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -13,7 +14,7 @@ import (
 
 func Test_get_value(t *testing.T) {
 	t.Run("should call get value with request", func(t *testing.T) {
-		var receivedRequest coordinator.GetValueRequest
+		var receivedRequest getvalue.Request
 
 		runServerAndGetValueWithRequest(
 			newWithGetValueFunc(getValueCaptureRequest(&receivedRequest)),
@@ -25,7 +26,7 @@ func Test_get_value(t *testing.T) {
 
 	t.Run("should return response", func(t *testing.T) {
 		response, err := runServerAndGetValueWithResponse(
-			newWithGetValueFunc(getValueWithResponse(rslt.Value(coordinator.GetValueResponse{
+			newWithGetValueFunc(getValueWithResponse(rslt.Value(getvalue.Response{
 				Value: "123",
 			}))),
 		)
@@ -37,7 +38,7 @@ func Test_get_value(t *testing.T) {
 	t.Run("should return not found error", func(t *testing.T) {
 		response, err := runServerAndGetValueWithResponse(
 			newWithGetValueFunc(getValueWithResponse(
-				rslt.Error[coordinator.GetValueResponse](coordinator.NewKeyNotFoundError("aaa")),
+				rslt.Error[getvalue.Response](usecaseError.NewKeyNotFound("aaa")),
 			)),
 		)
 
@@ -48,7 +49,7 @@ func Test_get_value(t *testing.T) {
 	t.Run("should return unknown error", func(t *testing.T) {
 		response, err := runServerAndGetValueWithResponse(
 			newWithGetValueFunc(getValueWithResponse(
-				rslt.Error[coordinator.GetValueResponse](errors.New("boom")),
+				rslt.Error[getvalue.Response](errors.New("boom")),
 			)),
 		)
 

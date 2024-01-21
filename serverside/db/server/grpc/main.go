@@ -5,7 +5,8 @@ import (
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/grpcutil"
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/serverside/db/coordinator"
+	"distributed-kv-db/serverside/db/coordinator/usecase/getvalue"
+	"distributed-kv-db/serverside/db/coordinator/usecase/setvalue"
 	"google.golang.org/grpc"
 )
 
@@ -21,12 +22,12 @@ func newWithDeps(
 	registerImplFunc func(grpc2.ServerServer) func(*grpc.Server),
 	startServerFunc func(func(*grpc.Server)) func(grpcutil.ListenInfo) rslt.Of[grpcutil.StartedServer],
 	newResultFromGrpcServer func(grpcutil.StartedServer) RunningServer,
-) func(getValue coordinator.GetValueFunc, setValue coordinator.SetValueFunc) Func {
+) func(getValue getvalue.Func, setValue setvalue.Func) Func {
 
 	startServerFuncFromImpl := fn.Compose(startServerFunc, registerImplFunc)
 	newResult := rslt.Fmap(newResultFromGrpcServer)
 
-	return func(getValue coordinator.GetValueFunc, setValue coordinator.SetValueFunc) Func {
+	return func(getValue getvalue.Func, setValue setvalue.Func) Func {
 
 		startServer := rslt.FmapPartial(startServerFuncFromImpl(grpcImpl{
 			getValue: getValue,

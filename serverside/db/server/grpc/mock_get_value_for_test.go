@@ -5,16 +5,16 @@ import (
 	"distributed-kv-db/common/cntx"
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/serverside/db/coordinator"
+	"distributed-kv-db/serverside/db/coordinator/usecase/getvalue"
 )
 
-func getValueCaptureRequest(request *coordinator.GetValueRequest) coordinator.GetValueFunc {
-	return func(ctx context.Context, r coordinator.GetValueRequest) rslt.Of[coordinator.GetValueResponse] {
+func getValueCaptureRequest(request *getvalue.Request) getvalue.Func {
+	return func(ctx context.Context, r getvalue.Request) rslt.Of[getvalue.Response] {
 		*request = r
-		return rslt.Value(coordinator.GetValueResponse{})
+		return rslt.Value(getvalue.Response{})
 	}
 }
 
-func getValueWithResponse(response rslt.Of[coordinator.GetValueResponse]) coordinator.GetValueFunc {
-	return cntx.Func(fn.Const[coordinator.GetValueRequest](response))
+func getValueWithResponse(response rslt.Of[getvalue.Response]) getvalue.Func {
+	return cntx.Func(fn.Const[getvalue.Request](response))
 }

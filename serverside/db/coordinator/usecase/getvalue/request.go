@@ -1,7 +1,9 @@
 package getvalue
 
-import "distributed-kv-db/serverside/db/coordinator"
-
-func keyOfRequest(request coordinator.GetValueRequest) string {
+func keyOfRequest(request Request) string {
 	return request.Key
+}
+
+type Request struct {
+	Key string
 }

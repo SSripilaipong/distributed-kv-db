@@ -4,7 +4,6 @@ import (
 	"context"
 	"distributed-kv-db/common/cntx"
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/serverside/db/coordinator"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,7 +14,7 @@ func Test_newFunc(t *testing.T) {
 
 		getValueWithRequest(
 			newWithReadRepairFunc(readRepairCaptureQuery(&query)),
-			coordinator.GetValueRequest{Key: "abc"},
+			Request{Key: "abc"},
 		)
 
 		assert.Equal(tt, "abc", query)
@@ -37,6 +36,6 @@ func Test_newFunc(t *testing.T) {
 			newWithReadRepairFunc(readRepairWithResponse(rslt.Value("yeah"))),
 		)
 
-		assert.Equal(tt, rslt.Value(coordinator.GetValueResponse{Value: "yeah"}), resp)
+		assert.Equal(tt, rslt.Value(Response{Value: "yeah"}), resp)
 	})
 }
