@@ -1,0 +1,29 @@
+package read
+
+import (
+	"context"
+	"distributed-kv-db/common/rslt"
+	"distributed-kv-db/common/typ"
+	"distributed-kv-db/serverside/db/coordinator/peer/discovery"
+	peerRead "distributed-kv-db/serverside/db/coordinator/peer/read"
+	quorumFilter "distributed-kv-db/serverside/db/coordinator/quorum/filter"
+)
+
+func NodesToDataSlice[Key, Data any, Node peerRead.ReadableNode[Key, Data]](
+	discoverNodes discovery.Func[Key, Node],
+) func(ctx context.Context, key Key, nodes []Node) rslt.Of[[]Data] {
+	return composeNodesToDataSlice[Key, Data, Node](
+		quorumFilter.ChannelToSlice[Data], peerRead.NodesDataToChannel[Key, Data, Node], discoverNodes,
+	)
+}
+
+func composeNodesToDataSlice[Key, Data, Node any](
+	quorumOfData func(n int) func(<-chan Data) rslt.Of[[]Data],
+	readNode func(ctx context.Context, key Key, nodes []Node) <-chan Data,
+	discoverNodes discovery.Func[Key, Node],
+) func(ctx context.Context, key Key, nodes []Node) rslt.Of[[]Data] {
+	return func(ctx context.Context, key Key, nodes []Node) rslt.Of[[]Data] {
+		discoverNodes(context.Background(), key)
+		return rslt.Value(typ.Zero[[]Data]())
+	}
+}
