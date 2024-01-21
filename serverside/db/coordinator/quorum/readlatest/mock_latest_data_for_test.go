@@ -1,4 +1,4 @@
-package read
+package readlatest
 
 import (
 	"distributed-kv-db/common/fn"

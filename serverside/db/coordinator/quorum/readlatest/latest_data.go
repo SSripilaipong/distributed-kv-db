@@ -1,18 +1,17 @@
-package read
+package readlatest
 
 import (
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/serverside/db/coordinator/quorum"
 	"errors"
 	"slices"
 )
 
-type orderableData interface {
-	quorum.Orderable
-	quorum.Hashable
+type ReadableData interface {
+	Orderable
+	Hashable
 }
 
-func latestData[Data orderableData](xs []Data) rslt.Of[Data] {
+func latestData[Data ReadableData](xs []Data) rslt.Of[Data] {
 	if len(xs) == 0 {
 		return rslt.Error[Data](errors.New("no data"))
 	}
@@ -22,4 +21,12 @@ func latestData[Data orderableData](xs []Data) rslt.Of[Data] {
 		}
 		return x.Hash() - y.Newness()
 	}))
+}
+
+type Orderable interface {
+	Newness() int
+}
+
+type Hashable interface {
+	Hash() int
 }

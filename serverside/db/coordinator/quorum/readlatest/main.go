@@ -1,4 +1,4 @@
-package read
+package readlatest
 
 import (
 	"context"
@@ -6,10 +6,12 @@ import (
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/common/zd"
-	"distributed-kv-db/serverside/db/coordinator/quorum"
+	"distributed-kv-db/serverside/db/coordinator/peer/discovery"
+	peerRead "distributed-kv-db/serverside/db/coordinator/peer/read"
+	quorumRead "distributed-kv-db/serverside/db/coordinator/quorum/read"
 )
 
-func New[Key any, Data orderableData, Node quorum.ReadNode[Key, Data]](discoverNodes quorum.DiscoverNodes[Key, Node]) quorum.ReadFunc[Key, Data] {
+func New[Key any, Data ReadableData, Node peerRead.ReadableNode[Key, Data]](discoverNodes discovery.DiscoverNodes[Key, Node]) quorumRead.Func[Key, Data] {
 	return newFunc(
 		discoverNodes,
 		nil,
@@ -18,10 +20,10 @@ func New[Key any, Data orderableData, Node quorum.ReadNode[Key, Data]](discoverN
 }
 
 func newFunc[Key, Data, Node any](
-	discoverNodes quorum.DiscoverNodes[Key, Node],
+	discoverNodes discovery.DiscoverNodes[Key, Node],
 	readQuorumOfNodesData func(context.Context, Key, []Node) rslt.Of[[]Data],
 	latestData func([]Data) rslt.Of[Data],
-) quorum.ReadFunc[Key, Data] {
+) quorumRead.Func[Key, Data] {
 	return func(ctx context.Context, key Key) rslt.Of[Data] {
 		readQuorumData := fn.Bind2(ctx, key, readQuorumOfNodesData)
 

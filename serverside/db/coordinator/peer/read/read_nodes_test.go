@@ -7,7 +7,7 @@ import (
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/common/slc"
-	"distributed-kv-db/serverside/db/coordinator/quorum"
+	"distributed-kv-db/common/typ"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -16,7 +16,7 @@ import (
 func Test_readNodesDataToChannel(t *testing.T) {
 	type Key = int
 	type Data = int
-	type Node = quorum.ReadNode[Key, Data]
+	type Node = ReadableNode[Key, Data]
 	defaultTimeout := 100 * time.Millisecond
 	NodeMock := nodeDummy[Key, Data]
 	ReadWithNodes := readNodesDataToChannelWithNodes[Key, Data, Node]
@@ -66,4 +66,16 @@ func Test_readNodesDataToChannel(t *testing.T) {
 		})
 		assert.Equal(tt, []Data{123, 456}, slc.Sorted(allInChannel(ch).Value()))
 	})
+}
+
+func readNodesDataToChannelWithNodes[Key, Data any, Node ReadableNode[Key, Data]](nodes []Node) <-chan Data {
+	return readNodesDataToChannelWithContextAndNodes[Key, Data](context.Background(), nodes)
+}
+
+func readNodesDataToChannelWithContextAndNodes[Key, Data any, Node ReadableNode[Key, Data]](ctx context.Context, nodes []Node) <-chan Data {
+	return NodesDataToChannel[Key, Data](ctx, typ.Zero[Key](), nodes)
+}
+
+func readWithKeyAndNodes[Key, Data any, Node ReadableNode[Key, Data]](key Key, nodes []Node) <-chan Data {
+	return NodesDataToChannel[Key, Data](context.Background(), key, nodes)
 }

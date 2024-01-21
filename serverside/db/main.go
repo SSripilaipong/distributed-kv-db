@@ -1,9 +1,9 @@
 package db
 
 import (
-	"distributed-kv-db/serverside/db/coordinator/getvalue"
 	"distributed-kv-db/serverside/db/coordinator/quorum/readrepair"
-	"distributed-kv-db/serverside/db/coordinator/setvalue"
+	"distributed-kv-db/serverside/db/coordinator/usecase/getvalue"
+	"distributed-kv-db/serverside/db/coordinator/usecase/setvalue"
 	"distributed-kv-db/serverside/db/server"
 )
 

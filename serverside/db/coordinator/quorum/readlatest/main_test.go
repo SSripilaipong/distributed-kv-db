@@ -1,4 +1,4 @@
-package read
+package readlatest
 
 import (
 	"context"

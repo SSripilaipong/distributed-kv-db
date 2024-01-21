@@ -1,6 +1,8 @@
 package db
 
-import "distributed-kv-db/serverside/db/coordinator/quorum"
+import (
+	"distributed-kv-db/serverside/db/coordinator/quorum/readlatest"
+)
 
 type orderableDataAdapter struct{}
 
@@ -14,5 +16,5 @@ func (d orderableDataAdapter) Newness() int {
 	panic("implement me")
 }
 
-var _ quorum.Orderable = orderableDataAdapter{}
-var _ quorum.Hashable = orderableDataAdapter{}
+var _ readlatest.Orderable = orderableDataAdapter{}
+var _ readlatest.Hashable = orderableDataAdapter{}

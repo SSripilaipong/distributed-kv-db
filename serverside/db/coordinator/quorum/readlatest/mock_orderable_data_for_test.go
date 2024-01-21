@@ -1,4 +1,4 @@
-package read
+package readlatest
 
 type orderableDataMock struct {
 	newness int
