@@ -16,7 +16,7 @@ type orderableData interface {
 	readlatest.Hashable
 }
 
-func New[Key any, Data orderableData](discoverNodes discovery.DiscoverNodes[Key, peerRead.ReadableNode[Key, Data]]) read.Func[Key, Data] {
+func New[Key any, Data orderableData](discoverNodes discovery.Func[Key, peerRead.ReadableNode[Key, Data]]) read.Func[Key, Data] {
 	return newFunc[Key, Data](
 		readlatest.New[Key, Data](discoverNodes),
 		write.New(discoverNodes),

@@ -11,7 +11,7 @@ import (
 	quorumRead "distributed-kv-db/serverside/db/coordinator/quorum/read"
 )
 
-func New[Key any, Data ReadableData, Node peerRead.ReadableNode[Key, Data]](discoverNodes discovery.DiscoverNodes[Key, Node]) quorumRead.Func[Key, Data] {
+func New[Key any, Data ReadableData, Node peerRead.ReadableNode[Key, Data]](discoverNodes discovery.Func[Key, Node]) quorumRead.Func[Key, Data] {
 	return newFunc(
 		discoverNodes,
 		nil,
@@ -20,7 +20,7 @@ func New[Key any, Data ReadableData, Node peerRead.ReadableNode[Key, Data]](disc
 }
 
 func newFunc[Key, Data, Node any](
-	discoverNodes discovery.DiscoverNodes[Key, Node],
+	discoverNodes discovery.Func[Key, Node],
 	readQuorumOfNodesData func(context.Context, Key, []Node) rslt.Of[[]Data],
 	latestData func([]Data) rslt.Of[Data],
 ) quorumRead.Func[Key, Data] {
