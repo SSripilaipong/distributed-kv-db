@@ -2,6 +2,7 @@ package read
 
 import (
 	"context"
+	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/common/typ"
 	"distributed-kv-db/serverside/db/coordinator/peer/discovery"
@@ -19,11 +20,11 @@ func NodesToDataSlice[Key, Data any, Node peerRead.ReadableNode[Key, Data]](
 
 func composeNodesToDataSlice[Key, Data, Node any](
 	quorumOfData func(n int) func(<-chan Data) rslt.Of[[]Data],
-	readNode func(ctx context.Context, key Key, nodes []Node) <-chan Data,
+	readNodes func(ctx context.Context, key Key, nodes []Node) <-chan Data,
 	discoverNodes discovery.Func[Key, Node],
 ) func(ctx context.Context, key Key) rslt.Of[[]Data] {
 	return func(ctx context.Context, key Key) rslt.Of[[]Data] {
-		discoverNodes(ctx, key)
+		rslt.Fmap(fn.Bind2(nil, typ.Zero[Key](), readNodes))(discoverNodes(ctx, key))
 		return rslt.Value(typ.Zero[[]Data]())
 	}
 }

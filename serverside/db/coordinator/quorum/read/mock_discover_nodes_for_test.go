@@ -15,9 +15,16 @@ func discoverNodesCaptureKey[Key, Node any](key *Key) func(ctx context.Context, 
 		return discoverNodesDummy[Key, Node](c, k)
 	}
 }
+
 func discoverNodesCaptureContext[Key, Node any](ctx *context.Context) func(ctx context.Context, key Key) rslt.Of[[]Node] {
 	return func(c context.Context, k Key) rslt.Of[[]Node] {
 		*ctx = c
 		return discoverNodesDummy[Key, Node](c, k)
+	}
+}
+
+func discoverNodesWithResult[Key, Node any](result rslt.Of[[]Node]) func(ctx context.Context, key Key) rslt.Of[[]Node] {
+	return func(c context.Context, k Key) rslt.Of[[]Node] {
+		return result
 	}
 }
