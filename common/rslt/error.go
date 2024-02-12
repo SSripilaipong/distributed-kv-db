@@ -7,7 +7,7 @@ func Error[T any](err error) Of[T] {
 	}
 }
 
-func OfError(r Of[error]) error {
+func ErrorOf(r Of[error]) error {
 	if r.IsOk() {
 		return r.Value()
 	}

@@ -32,5 +32,5 @@ func newFunc[Key, Data any](quorumRead read.Func[Key, Data], quorumWrite write.F
 }
 
 func fmapResultToError[A any](f func(A) error) func(rslt.Of[A]) error {
-	return fn.Compose(rslt.OfError, rslt.Fmap(f))
+	return fn.Compose(rslt.ErrorOf, rslt.Fmap(f))
 }

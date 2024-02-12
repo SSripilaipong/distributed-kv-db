@@ -23,9 +23,16 @@ func composeNodesToDataSlice[Key, Data, Node any](
 	readNodes func(ctx context.Context, key Key, nodes []Node) <-chan Data,
 	discoverNodes discovery.Func[Key, Node],
 ) func(ctx context.Context, key Key) rslt.Of[[]Data] {
+	filterQuorumForNodes := fn.Compose3(filterQuorum, rslt.ValueOf[int], rslt.Fmap(lenOfSlice[Node]))
+
 	return func(ctx context.Context, key Key) rslt.Of[[]Data] {
-		quorumOfN := filterQuorum(0)
-		rslt.Fmap(fn.Compose(quorumOfN, fn.WithArg2(ctx, key, readNodes)))(discoverNodes(ctx, key))
+		nodes := discoverNodes(ctx, key)
+		quorumOfN := filterQuorumForNodes(nodes)
+		rslt.Fmap(fn.Compose(quorumOfN, fn.WithArg2(ctx, key, readNodes)))(nodes)
 		return rslt.Value(typ.Zero[[]Data]())
 	}
+}
+
+func lenOfSlice[T any](xs []T) int {
+	return len(xs)
 }
