@@ -15,8 +15,8 @@ func Test_MapSlice(t *testing.T) {
 	type A = string
 	type B = int
 	defaultTimeout := 100 * time.Millisecond
-	allInChannel := fn.Bind(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[B])
-	waitUtilChannelClosed := rslt.OkFunc(fn.Bind(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[B]))
+	allInChannel := fn.WithArg(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[B])
+	waitUtilChannelClosed := rslt.OkFunc(fn.WithArg(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[B]))
 	MapSliceWithXs := mapSliceWithXs[A, B]
 	MapSliceWithFAndXs := mapSliceWithFAndXs[A, B]
 	FCaptureAllX := mapSliceFCaptureAllX[A, B]

@@ -25,7 +25,7 @@ func newFunc[Key, Data, Node any](
 	latestData func([]Data) rslt.Of[Data],
 ) quorumRead.Func[Key, Data] {
 	return func(ctx context.Context, key Key) rslt.Of[Data] {
-		readQuorumData := fn.Bind2(ctx, key, readQuorumOfNodesData)
+		readQuorumData := fn.WithArg2(ctx, key, readQuorumOfNodesData)
 
 		return fn.Compose3(
 			rslt.FmapPartial(latestData), rslt.FmapPartial(readQuorumData), fn.Ctx(ctx, discoverNodes),
@@ -41,7 +41,7 @@ func latestDataFromQuorumOfNodesFunc[Key, Data, Node any](
 
 	return func(ctx context.Context, key Key, nodes []Node) rslt.Of[Data] {
 		return fn.Compose3(
-			rslt.FmapPartial(latestData), quorumOfData(len(nodes)), fn.Bind2(ctx, key, readNodesDataToChannel),
+			rslt.FmapPartial(latestData), quorumOfData(len(nodes)), fn.WithArg2(ctx, key, readNodesDataToChannel),
 		)(nodes)
 	}
 }
