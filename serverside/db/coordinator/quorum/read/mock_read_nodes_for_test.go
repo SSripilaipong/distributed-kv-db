@@ -19,3 +19,10 @@ func readNodesCaptureKey[Key, Data, Node any](key *Key) func(ctx context.Context
 		return readNodesDummy[Key, Data, Node](c, k, n)
 	}
 }
+
+func readNodesCaptureContext[Key, Data, Node any](ctx *context.Context) func(ctx context.Context, key Key, nodes []Node) <-chan Data {
+	return func(c context.Context, k Key, n []Node) <-chan Data {
+		*ctx = c
+		return readNodesDummy[Key, Data, Node](c, k, n)
+	}
+}

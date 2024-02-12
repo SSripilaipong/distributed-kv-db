@@ -20,6 +20,7 @@ func Test_NodesToDataSlice(t *testing.T) {
 	DiscoverNodesWithResult := discoverNodesWithResult[Key, Node]
 	ReadNodesCaptureNodes := readNodesCaptureNodes[Key, Data, Node]
 	ReadNodesCaptureKey := readNodesCaptureKey[Key, Data, Node]
+	ReadNodesCaptureContext := readNodesCaptureContext[Key, Data, Node]
 	Execute := runNodesToDataSliceForTest[Key, Data, Node]
 	WithKey := withKey[Key, Node]
 	WithContext := withContext[Key, Node]
@@ -34,21 +35,25 @@ func Test_NodesToDataSlice(t *testing.T) {
 	})
 
 	t.Run("should discover nodes with same context", func(tt *testing.T) {
+		inputCtx, isSame := cntx.WithVerifier()
+
 		var ctx context.Context
 		Execute(
 			Target(WithDiscoverNodes(DiscoverNodesCaptureContext(&ctx))),
-			WithContext(cntx.WithValue("is the same?", "yes")),
+			WithContext(inputCtx),
 		)
-		assert.Equal(tt, "yes", ctx.Value("is the same?"))
+		assert.True(tt, isSame(ctx))
 	})
 
 	t.Run("should discover nodes with same context", func(tt *testing.T) {
+		inputCtx, isSame := cntx.WithVerifier()
+
 		var ctx context.Context
 		Execute(
 			Target(WithDiscoverNodes(DiscoverNodesCaptureContext(&ctx))),
-			WithContext(cntx.WithValue("is the same?", "yes")),
+			WithContext(inputCtx),
 		)
-		assert.Equal(tt, "yes", ctx.Value("is the same?"))
+		assert.True(tt, isSame(ctx))
 	})
 
 	t.Run("should read from discovered nodes", func(tt *testing.T) {
@@ -67,5 +72,16 @@ func Test_NodesToDataSlice(t *testing.T) {
 			WithKey(555),
 		)
 		assert.Equal(tt, Key(555), key)
+	})
+
+	t.Run("should read nodes with context", func(tt *testing.T) {
+		inputCtx, isSame := cntx.WithVerifier()
+
+		var ctx context.Context
+		Execute(
+			Target(WithReadNodes(ReadNodesCaptureContext(&ctx))),
+			WithContext(inputCtx),
+		)
+		assert.True(tt, isSame(ctx))
 	})
 }

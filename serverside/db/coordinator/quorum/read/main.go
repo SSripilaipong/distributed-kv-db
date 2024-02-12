@@ -24,7 +24,7 @@ func composeNodesToDataSlice[Key, Data, Node any](
 	discoverNodes discovery.Func[Key, Node],
 ) func(ctx context.Context, key Key) rslt.Of[[]Data] {
 	return func(ctx context.Context, key Key) rslt.Of[[]Data] {
-		rslt.Fmap(fn.Bind2(nil, key, readNodes))(discoverNodes(ctx, key))
+		rslt.Fmap(fn.Bind2(ctx, key, readNodes))(discoverNodes(ctx, key))
 		return rslt.Value(typ.Zero[[]Data]())
 	}
 }
