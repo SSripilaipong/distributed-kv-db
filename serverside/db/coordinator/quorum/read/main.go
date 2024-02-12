@@ -19,12 +19,13 @@ func NodesToDataSlice[Key, Data any, Node peerRead.ReadableNode[Key, Data]](
 }
 
 func composeNodesToDataSlice[Key, Data, Node any](
-	quorumOfData func(n int) func(<-chan Data) rslt.Of[[]Data],
+	filterQuorum func(n int) func(<-chan Data) rslt.Of[[]Data],
 	readNodes func(ctx context.Context, key Key, nodes []Node) <-chan Data,
 	discoverNodes discovery.Func[Key, Node],
 ) func(ctx context.Context, key Key) rslt.Of[[]Data] {
 	return func(ctx context.Context, key Key) rslt.Of[[]Data] {
-		rslt.Fmap(fn.WithArg2(ctx, key, readNodes))(discoverNodes(ctx, key))
+		quorumOfN := filterQuorum(0)
+		rslt.Fmap(fn.Compose(quorumOfN, fn.WithArg2(ctx, key, readNodes)))(discoverNodes(ctx, key))
 		return rslt.Value(typ.Zero[[]Data]())
 	}
 }
