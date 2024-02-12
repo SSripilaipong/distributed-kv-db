@@ -28,3 +28,11 @@ func filterQuorumCaptureN[Data any](n *int) func(n int) func(<-chan Data) rslt.O
 		}
 	}
 }
+
+func filterQuorumWithResult[Data any](result rslt.Of[[]Data]) func(n int) func(<-chan Data) rslt.Of[[]Data] {
+	return func(n int) func(<-chan Data) rslt.Of[[]Data] {
+		return func(data <-chan Data) rslt.Of[[]Data] {
+			return result
+		}
+	}
+}

@@ -111,4 +111,11 @@ func Test_NodesToDataSlice(t *testing.T) {
 		))
 		assert.Equal(tt, 3, n)
 	})
+
+	t.Run("should return from filter quorum", func(tt *testing.T) {
+		y := Execute(Target(
+			WithFilterQuorum(filterQuorumWithResult(rslt.Value([]Data{3, 2, 1}))),
+		))
+		assert.Equal(tt, rslt.Value([]Data{3, 2, 1}), y)
+	})
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
-	"distributed-kv-db/common/typ"
 	"distributed-kv-db/serverside/db/coordinator/peer/discovery"
 	peerRead "distributed-kv-db/serverside/db/coordinator/peer/read"
 	quorumFilter "distributed-kv-db/serverside/db/coordinator/quorum/filter"
@@ -27,9 +26,9 @@ func composeNodesToDataSlice[Key, Data, Node any](
 
 	return func(ctx context.Context, key Key) rslt.Of[[]Data] {
 		nodes := discoverNodes(ctx, key)
-		quorumOfN := filterQuorumForNodes(nodes)
-		rslt.Fmap(fn.Compose(quorumOfN, fn.WithArg2(ctx, key, readNodes)))(nodes)
-		return rslt.Value(typ.Zero[[]Data]())
+		return rslt.FmapPartial(
+			fn.Compose(filterQuorumForNodes(nodes), fn.WithArg2(ctx, key, readNodes)),
+		)(nodes)
 	}
 }
 
