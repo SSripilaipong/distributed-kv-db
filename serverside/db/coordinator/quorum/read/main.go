@@ -10,28 +10,22 @@ import (
 )
 
 func NodesToDataSlice[Key, Data any, Node peerRead.ReadableNode[Key, Data]](
-	discoverNodes discovery.Func[Key, Node],
+	nReplicas int, discoverNodes discovery.Func[Key, Node],
 ) func(ctx context.Context, key Key) rslt.Of[[]Data] {
 	return composeNodesToDataSlice[Key, Data, Node](
-		quorumFilter.ChannelToSlice[Data], peerRead.NodesDataToChannel[Key, Data, Node], discoverNodes,
+		quorumFilter.ChannelToSlice[Data](nReplicas), peerRead.NodesDataToChannel[Key, Data, Node], discoverNodes,
 	)
 }
 
 func composeNodesToDataSlice[Key, Data, Node any](
-	filterQuorum func(n int) func(<-chan Data) rslt.Of[[]Data],
+	filterQuorum func(<-chan Data) rslt.Of[[]Data],
 	readNodes func(ctx context.Context, key Key, nodes []Node) <-chan Data,
 	discoverNodes discovery.Func[Key, Node],
 ) func(ctx context.Context, key Key) rslt.Of[[]Data] {
-	filterQuorumForNodes := fn.Compose3(filterQuorum, rslt.ValueOf[int], rslt.Fmap(lenOfSlice[Node]))
-
 	return func(ctx context.Context, key Key) rslt.Of[[]Data] {
-		nodes := discoverNodes(ctx, key)
-		return rslt.FmapPartial(
-			fn.Compose(filterQuorumForNodes(nodes), fn.WithArg2(ctx, key, readNodes)),
-		)(nodes)
+		filterAfterRead := fn.Compose(filterQuorum, fn.WithArg2(ctx, key, readNodes))
+		return fn.Compose(
+			rslt.FmapPartial(filterAfterRead), fn.Ctx(ctx, discoverNodes),
+		)(key)
 	}
-}
-
-func lenOfSlice[T any](xs []T) int {
-	return len(xs)
 }

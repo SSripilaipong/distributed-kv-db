@@ -28,7 +28,6 @@ func Test_NodesToDataSlice(t *testing.T) {
 	ReadNodesCaptureContext := readNodesCaptureContext[Key, Data, Node]
 	ReadNodesWithResult := readNodesWithResult[Key, Data, Node]
 	FilterQuorumCaptureXs := filterQuorumCaptureXs[Data]
-	FilterQuorumCaptureN := filterQuorumCaptureN[Data]
 	Execute := runNodesToDataSliceForTest[Key, Data, Node]
 	WithKey := withKey[Key, Node]
 	WithContext := withContext[Key, Node]
@@ -101,15 +100,6 @@ func Test_NodesToDataSlice(t *testing.T) {
 			WithFilterQuorum(FilterQuorumCaptureXs(&xs)),
 		))
 		assert.Equal(tt, rslt.Value([]Data{1, 2, 3}), AllData(xs))
-	})
-
-	t.Run("should filter quorum with number of nodes", func(tt *testing.T) {
-		var n int
-		Execute(Target(
-			WithDiscoverNodes(DiscoverNodesWithResult(rslt.Value([]Node{"a", "b", "c"}))),
-			WithFilterQuorum(FilterQuorumCaptureN(&n)),
-		))
-		assert.Equal(tt, 3, n)
 	})
 
 	t.Run("should return from filter quorum", func(tt *testing.T) {

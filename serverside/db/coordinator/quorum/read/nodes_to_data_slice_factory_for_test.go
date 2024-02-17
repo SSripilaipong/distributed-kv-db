@@ -8,7 +8,7 @@ import (
 )
 
 type nodesToDataSliceTestDeps[Key, Data, Node any] struct {
-	filterQuorum  func(n int) func(<-chan Data) rslt.Of[[]Data]
+	filterQuorum  func(<-chan Data) rslt.Of[[]Data]
 	readNodes     func(ctx context.Context, key Key, nodes []Node) <-chan Data
 	discoverNodes discovery.Func[Key, Node]
 }
@@ -34,7 +34,7 @@ func withReadNodes[Key, Data, Node any](readNodes func(ctx context.Context, key 
 	}
 }
 
-func withFilterQuorum[Key, Data, Node any](filterQuorum func(n int) func(<-chan Data) rslt.Of[[]Data]) func(*nodesToDataSliceTestDeps[Key, Data, Node]) {
+func withFilterQuorum[Key, Data, Node any](filterQuorum func(<-chan Data) rslt.Of[[]Data]) func(*nodesToDataSliceTestDeps[Key, Data, Node]) {
 	return func(deps *nodesToDataSliceTestDeps[Key, Data, Node]) {
 		deps.filterQuorum = filterQuorum
 	}
