@@ -9,14 +9,10 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/quorum/read"
 	"distributed-kv-db/serverside/db/coordinator/quorum/readlatest"
 	"distributed-kv-db/serverside/db/coordinator/quorum/write"
+	"distributed-kv-db/serverside/db/data/temporal"
 )
 
-type orderableData interface {
-	readlatest.Orderable
-	readlatest.Hashable
-}
-
-func New[Key any, Data orderableData](discoverNodes discovery.Func[Key, peerRead.ReadableNode[Key, Data]]) read.Func[Key, Data] {
+func New[Key any, Data temporal.Hashable](discoverNodes discovery.Func[Key, peerRead.ReadableNode[Key, Data]]) read.Func[Key, Data] {
 	return newFunc[Key, Data](
 		readlatest.New[Key, Data](discoverNodes),
 		write.New(discoverNodes),

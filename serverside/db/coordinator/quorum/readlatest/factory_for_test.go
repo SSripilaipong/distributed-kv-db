@@ -8,7 +8,7 @@ import (
 )
 
 func newFuncWithDiscoverNodesAndReadNodesDataToChannelsAndLatestData[Key, Data, Node any](discoverNodes discovery.Func[Key, Node], readQuorumOfNodesData func(context.Context, Key, []Node) rslt.Of[[]Data], latestData func([]Data) rslt.Of[Data]) peerRead.Func[Key, Data] {
-	return newFunc(discoverNodes, readQuorumOfNodesData, latestData)
+	return composeReadLatest(discoverNodes, readQuorumOfNodesData, latestData)
 }
 
 func newFuncWithDiscoverNodesAndReadQuorumOfNodesData[Key, Data, Node any](discoverNodes discovery.Func[Key, Node], readQuorumOfNodesData func(context.Context, Key, []Node) rslt.Of[[]Data]) peerRead.Func[Key, Data] {
@@ -28,5 +28,5 @@ func newFuncWithDiscoverNodes[Key, Data, Node any](discoverNodes discovery.Func[
 }
 
 func newFuncWithLatestData[Key, Data, Node any](latestData func([]Data) rslt.Of[Data]) peerRead.Func[Key, Data] {
-	return newFunc(discoverNodesFuncDummy[Key, Node], readQuorumOfNodesDataDummy[Key, Data, Node], latestData)
+	return composeReadLatest(discoverNodesFuncDummy[Key, Node], readQuorumOfNodesDataDummy[Key, Data, Node], latestData)
 }

@@ -1,6 +1,6 @@
 package temporal
 
-type hashableData interface {
+type Hashable interface {
 	data
 	hashable
 }

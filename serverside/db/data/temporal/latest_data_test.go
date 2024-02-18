@@ -1,4 +1,4 @@
-package readlatest
+package temporal
 
 import (
 	"distributed-kv-db/common/rslt"
@@ -7,21 +7,22 @@ import (
 	"testing"
 )
 
-func Test_latestData(t *testing.T) {
-	type Data = orderableDataMock
-	LatestData := latestData[Data]
+func Test_LatestInSlice(t *testing.T) {
+	type Data = hashableDataMock
+	latestInSlice := LatestInSlice[Data]
+
 	t.Run("should return error if slice is empty", func(tt *testing.T) {
-		result := LatestData([]Data{})
+		result := latestInSlice([]Data{})
 		assert.Equal(tt, rslt.Error[Data](errors.New("no data")), result)
 	})
 
 	t.Run("should return error if slice is nil", func(tt *testing.T) {
-		result := LatestData(nil)
+		result := latestInSlice(nil)
 		assert.Equal(tt, rslt.Error[Data](errors.New("no data")), result)
 	})
 
 	t.Run("should return newest data", func(tt *testing.T) {
-		result := LatestData([]Data{
+		result := latestInSlice([]Data{
 			orderableDataWithNewness(1),
 			orderableDataWithNewness(2),
 			orderableDataWithNewness(0),
@@ -30,7 +31,7 @@ func Test_latestData(t *testing.T) {
 	})
 
 	t.Run("should return one with higher hash if newness is the same", func(tt *testing.T) {
-		result := LatestData([]Data{
+		result := latestInSlice([]Data{
 			orderableDataWithNewnessAndHash(1, 999),
 			orderableDataWithNewnessAndHash(2, 111),
 			orderableDataWithNewnessAndHash(2, 222),

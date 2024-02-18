@@ -9,17 +9,16 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/peer/discovery"
 	peerRead "distributed-kv-db/serverside/db/coordinator/peer/read"
 	quorumRead "distributed-kv-db/serverside/db/coordinator/quorum/read"
+	temporalData "distributed-kv-db/serverside/db/data/temporal"
 )
 
-func New[Key any, Data ReadableData, Node peerRead.ReadableNode[Key, Data]](discoverNodes discovery.Func[Key, Node]) quorumRead.Func[Key, Data] {
-	return newFunc(
-		discoverNodes,
-		nil,
-		latestData[Data],
+func New[Key any, Data temporalData.Hashable, Node peerRead.ReadableNode[Key, Data]](discoverNodes discovery.Func[Key, Node]) quorumRead.Func[Key, Data] {
+	return composeReadLatest(
+		discoverNodes, nil, temporalData.LatestInSlice[Data],
 	)
 }
 
-func newFunc[Key, Data, Node any](
+func composeReadLatest[Key, Data, Node any](
 	discoverNodes discovery.Func[Key, Node],
 	readQuorumOfNodesData func(context.Context, Key, []Node) rslt.Of[[]Data],
 	latestData func([]Data) rslt.Of[Data],

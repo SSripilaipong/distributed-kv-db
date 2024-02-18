@@ -1,7 +1,7 @@
 package db
 
 import (
-	"distributed-kv-db/serverside/db/coordinator/quorum/readlatest"
+	"distributed-kv-db/serverside/db/data/temporal"
 )
 
 type orderableDataAdapter struct{}
@@ -16,5 +16,4 @@ func (d orderableDataAdapter) Newness() int {
 	panic("implement me")
 }
 
-var _ readlatest.Orderable = orderableDataAdapter{}
-var _ readlatest.Hashable = orderableDataAdapter{}
+var _ temporal.Hashable = orderableDataAdapter{}

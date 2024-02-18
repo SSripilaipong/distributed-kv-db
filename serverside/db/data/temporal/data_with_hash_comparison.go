@@ -1,10 +1,10 @@
 package temporal
 
-type DataWithHashComparison[D hashableData] struct {
+type DataWithHashComparison[D Hashable] struct {
 	value D
 }
 
-func NewWithHashComparison[D hashableData](data D) DataWithHashComparison[D] {
+func NewWithHashComparison[D Hashable](data D) DataWithHashComparison[D] {
 	return DataWithHashComparison[D]{
 		value: data,
 	}
