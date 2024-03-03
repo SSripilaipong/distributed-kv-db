@@ -7,7 +7,7 @@ import (
 )
 
 func NodesDataToChannel[Key, Data any, Node ReadableNode[Key, Data]](ctx context.Context, key Key, nodes []Node) <-chan Data {
-	return strm.MapSlice(nodeToData[Key, Data, Node](ctx, key), ctx, nodes)
+	return strm.MapResultFromSlice(nodeToData[Key, Data, Node](ctx, key), ctx, nodes)
 }
 
 func nodeToData[Key, Data any, Node ReadableNode[Key, Data]](ctx context.Context, key Key) func(node Node) rslt.Of[Data] {

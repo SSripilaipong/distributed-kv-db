@@ -6,7 +6,7 @@ import (
 )
 
 func WithVerifier() (ctx context.Context, isSame func(context.Context) bool) {
-	key := "__cntx.WithVerification"
+	key := "__cntx.WithVerifier"
 	id := uuid.NewString()
 	return context.WithValue(context.Background(), key, id), func(ctx context.Context) bool {
 		if ctx == nil {

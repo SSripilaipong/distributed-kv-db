@@ -21,7 +21,7 @@ func Test_readNodesDataToChannel(t *testing.T) {
 	NodeMock := nodeDummy[Key, Data]
 	ReadWithNodes := readNodesDataToChannelWithNodes[Key, Data, Node]
 	allInChannel := fn.WithArg(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[Data])
-	waitUtilChannelClosed := rslt.OkFunc(fn.WithArg(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[Data]))
+	waitUntilChannelClosed := fn.Compose(rslt.IsOk[[]Data], allInChannel)
 	ReadWithContextAndNodes := readNodesDataToChannelWithContextAndNodes[Key, Data, Node]
 	ReadWithKeyAndNodes := readWithKeyAndNodes[Key, Data, Node]
 	NodeWithReadFunc := nodeWithReadFunc[Key, Data]
@@ -30,12 +30,12 @@ func Test_readNodesDataToChannel(t *testing.T) {
 	ReadFuncWithResult := readFuncWithResult[Key, Data]
 
 	t.Run("should close channel after all nodes read", func(tt *testing.T) {
-		assert.True(tt, waitUtilChannelClosed(ReadWithNodes([]Node{NodeMock()})))
+		assert.True(tt, waitUntilChannelClosed(ReadWithNodes([]Node{NodeMock()})))
 	})
 
 	t.Run("should read all nodes with context", func(tt *testing.T) {
 		var ctx1, ctx2 context.Context
-		waitUtilChannelClosed(ReadWithContextAndNodes(
+		waitUntilChannelClosed(ReadWithContextAndNodes(
 			cntx.WithValue("aaa", "bbb"),
 			[]Node{
 				NodeWithReadFunc(ReadFuncCaptureContext(&ctx1)),
@@ -48,7 +48,7 @@ func Test_readNodesDataToChannel(t *testing.T) {
 
 	t.Run("should read all nodes with key", func(tt *testing.T) {
 		var key1, key2 Key
-		waitUtilChannelClosed(ReadWithKeyAndNodes(
+		waitUntilChannelClosed(ReadWithKeyAndNodes(
 			555,
 			[]Node{
 				NodeWithReadFunc(ReadFuncCaptureKey(&key1)),

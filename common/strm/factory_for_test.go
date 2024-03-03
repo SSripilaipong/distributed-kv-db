@@ -6,7 +6,7 @@ import (
 )
 
 func mapSliceWithContextAndXs[A, B any](ctx context.Context, xs []A) <-chan B {
-	return MapSlice(mapSliceFDummy[A, B], ctx, xs)
+	return MapResultFromSlice(mapSliceFDummy[A, B], ctx, xs)
 }
 
 func mapSliceWithXs[A, B any](xs []A) <-chan B {
@@ -14,5 +14,5 @@ func mapSliceWithXs[A, B any](xs []A) <-chan B {
 }
 
 func mapSliceWithFAndXs[A, B any](f func(A) rslt.Of[B], xs []A) <-chan B {
-	return MapSlice[A, B](f, context.Background(), xs)
+	return MapResultFromSlice[A, B](f, context.Background(), xs)
 }
