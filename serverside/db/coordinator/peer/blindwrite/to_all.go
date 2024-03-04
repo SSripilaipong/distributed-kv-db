@@ -6,8 +6,8 @@ import (
 	"distributed-kv-db/common/strm"
 )
 
-func ToAll[Key, Data, Node any]() func(ctx context.Context, key Key, data Data, nodes []Node) <-chan error {
-	return composeToAll[Key, Data, Node](nil)
+func ToAll[Key, Data any, Node WritableNode[Key, Data]]() func(ctx context.Context, key Key, data Data, nodes []Node) <-chan error {
+	return composeToAll[Key, Data, Node](writeToNode[Key, Data, Node])
 }
 
 func composeToAll[Key, Data, Node any](write writeFunc[Key, Data, Node]) func(ctx context.Context, key Key, data Data, nodes []Node) <-chan error {
