@@ -1,12 +1,11 @@
 package main
 
 import (
-	"bytes"
+	"distributed-kv-db/common/codegen"
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
 	"distributed-kv-db/common/slc"
 	"fmt"
-	"go/format"
 	"io/fs"
 	"strings"
 	"text/template"
@@ -65,16 +64,6 @@ func renderTemplateToString(tmplFs fs.FS) func(detail renderDetail) rslt.Of[stri
 		if err != nil {
 			return rslt.Error[string](fmt.Errorf("parse template error: %w", err))
 		}
-		var buff bytes.Buffer
-		err = t.Execute(&buff, detail)
-		if err != nil {
-			return rslt.Error[string](fmt.Errorf("render error: %w", err))
-		}
-		raw := buff.String()
-		resultBytes, err := format.Source([]byte(raw))
-		if err != nil {
-			return rslt.Error[string](fmt.Errorf("format error: %w", err))
-		}
-		return rslt.Value(string(resultBytes))
+		return codegen.RenderString(t, detail)
 	}
 }

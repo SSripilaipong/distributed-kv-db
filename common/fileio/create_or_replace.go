@@ -1,11 +1,11 @@
-package main
+package fileio
 
 import (
 	"fmt"
 	"os"
 )
 
-func writeFile(fileName string, content string) error {
+func CreateOrReplace(fileName string, content string) error {
 	f, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	defer func() {
 		_ = f.Close()

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"distributed-kv-db/common/fileio"
 	"distributed-kv-db/common/zd"
 	"fmt"
 )
@@ -51,7 +52,7 @@ func processRequest(r request) error {
 	if result.IsError() {
 		return result.Error()
 	}
-	return writeFile(r.OutputPath, result.Value())
+	return fileio.CreateOrReplace(r.OutputPath, result.Value())
 }
 
 func genOuts(n int) (result []genericVarDetail) {
