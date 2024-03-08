@@ -23,7 +23,7 @@ func Test_ToAll(t *testing.T) {
 	defaultTimeout := 100 * time.Millisecond
 
 	Target := tstexc.NewFunc1Dep4In1Out(composeToAll[Key, Data, Node]).
-		DefaultI1(context.Background())
+		DefaultIn1(context.Background())
 	WithWriteFunc := Target.WithDep1
 	WithContext := Target.WithIn1
 	WithKey := Target.WithIn2
