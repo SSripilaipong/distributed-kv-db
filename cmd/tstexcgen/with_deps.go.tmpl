@@ -13,11 +13,11 @@ type {{.Name}}[{{.AllGenericTypeNamesStr}} any] struct {
     {{- end}}
 }
 
-func New{{.Name}}[{{.AllGenericTypeNamesStr}} any](f func({{.DepGenericTypeNamesStr}}) func({{.InGenericTypeNamesStr}}) ({{.OutGenericTypeNamesStr}})) {{.Name}}[{{.AllGenericTypeNamesStr}}] {
-    return {{.Name}}[{{.AllGenericTypeNamesStr}}]{execute: f}
-}
-
 {{define "funcWithGenericVars"}}{{.Name}}[{{.AllGenericTypeNamesStr}}]{{end}}
+
+func New{{.Name}}[{{.AllGenericTypeNamesStr}} any](f func({{.DepGenericTypeNamesStr}}) func({{.InGenericTypeNamesStr}}) ({{.OutGenericTypeNamesStr}})) {{.Name}}[{{.AllGenericTypeNamesStr}}] {
+    return {{template "funcWithGenericVars" $}}{execute: f}
+}
 
 func (f {{template "funcWithGenericVars" $}}) Execute(options ...func({{template "funcWithGenericVars" $}}) {{template "funcWithGenericVars" $}}) ({{.OutGenericTypeNamesStr}}) {
     g := f
