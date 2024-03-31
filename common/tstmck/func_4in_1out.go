@@ -43,6 +43,13 @@ func (f Func4In1Out[I1, I2, I3, I4, O1]) CaptureI4(x *I4) func(i1 I1, i2 I2, i3 
 	}
 	return f.Build()
 }
+
+func (f Func4In1Out[I1, I2, I3, I4, O1]) CheckIsCalled(isCalled *bool) func(i1 I1, i2 I2, i3 I3, i4 I4) O1 {
+	f.i1Hook = func(t I1) {
+		*isCalled = true
+	}
+	return f.Build()
+}
 func (f Func4In1Out[I1, I2, I3, I4, O1]) CaptureAllI1(x *[]I1) func(i1 I1, i2 I2, i3 I3, i4 I4) O1 {
 	f.i1Hook = func(t I1) {
 		*x = append(*x, t)

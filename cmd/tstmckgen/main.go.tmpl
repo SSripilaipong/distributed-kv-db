@@ -38,6 +38,13 @@ func New{{.Name}}Like[{{.AllGenericTypeNamesStr}} any](_ {{template "funcSignatu
     }
 {{- end}}
 
+func (f {{template "funcWithGenericVars" $}}) CheckIsCalled(isCalled *bool) {{template "funcSignature" $}} {
+    f.{{(index .Ins 0).VarName}}Hook = func(t {{(index .Ins 0).GenericTypeName}}) {
+        *isCalled = true
+    }
+    return f.Build()
+}
+
 {{- range $in := .Ins}}
     func (f {{template "funcWithGenericVars" $}}) CaptureAll{{$in.GenericTypeName}}(x *[]{{$in.GenericTypeName}}) {{template "funcSignature" $}} {
         f.{{$in.VarName}}Hook = func(t {{$in.GenericTypeName}}) {
