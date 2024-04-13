@@ -29,14 +29,17 @@ func New{{.Name}}Like[{{.AllGenericTypeNamesStr}} any](_ {{template "funcSignatu
     }
 }
 
-{{- range $in := .Ins}}
-    func (f {{template "funcWithGenericVars" $}}) Capture{{$in.GenericTypeName}}(x *{{$in.GenericTypeName}}) {{template "funcSignature" $}} {
+{{range $in := .Ins}}
+    func (f {{template "funcWithGenericVars" $}}) WithCapture{{$in.GenericTypeName}}(x *{{$in.GenericTypeName}}) {{template "funcWithGenericVars" $}} {
         f.{{$in.VarName}}Hook = func(t {{$in.GenericTypeName}}) {
             *x = t
         }
-        return f.Build()
+        return f
     }
-{{- end}}
+    func (f {{template "funcWithGenericVars" $}}) Capture{{$in.GenericTypeName}}(x *{{$in.GenericTypeName}}) {{template "funcSignature" $}} {
+        return f.WithCapture{{$in.GenericTypeName}}(x).Build()
+    }
+{{end}}
 
 func (f {{template "funcWithGenericVars" $}}) CheckIsCalled(isCalled *bool) {{template "funcSignature" $}} {
     f.{{(index .Ins 0).VarName}}Hook = func(t {{(index .Ins 0).GenericTypeName}}) {
@@ -45,23 +48,26 @@ func (f {{template "funcWithGenericVars" $}}) CheckIsCalled(isCalled *bool) {{te
     return f.Build()
 }
 
-{{- range $in := .Ins}}
-    func (f {{template "funcWithGenericVars" $}}) CaptureAll{{$in.GenericTypeName}}(x *[]{{$in.GenericTypeName}}) {{template "funcSignature" $}} {
+{{range $in := .Ins}}
+    func (f {{template "funcWithGenericVars" $}}) WithCaptureAll{{$in.GenericTypeName}}(x *[]{{$in.GenericTypeName}}) {{template "funcWithGenericVars" $}} {
         f.{{$in.VarName}}Hook = func(t {{$in.GenericTypeName}}) {
             *x = append(*x, t)
         }
-        return f.Build()
+        return f
     }
-{{- end}}
+    func (f {{template "funcWithGenericVars" $}}) CaptureAll{{$in.GenericTypeName}}(x *[]{{$in.GenericTypeName}}) {{template "funcSignature" $}} {
+        return f.WithCaptureAll{{$in.GenericTypeName}}(x).Build()
+    }
+{{end}}
 
-{{- range $out := .Outs}}
+{{range $out := .Outs}}
     func (f {{template "funcWithGenericVars" $}}) Return{{$out.GenericTypeName}}(x {{$out.GenericTypeName}}) {{template "funcSignature" $}} {
         f.{{$out.VarName}} = func() {{$out.GenericTypeName}} {
             return x
         }
         return f.Build()
     }
-{{- end}}
+{{end}}
 
 {{- range $out := .Outs}}
     func (f {{template "funcWithGenericVars" $}}) ReturnAll{{$out.GenericTypeName}}(xs []{{$out.GenericTypeName}}) {{template "funcSignature" $}} {

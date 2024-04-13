@@ -13,11 +13,15 @@ func NewFunc1In1OutLike[I1, O1 any](_ func(i1 I1) O1) Func1In1Out[I1, O1] {
 		o1:     func() (_ O1) { return },
 	}
 }
-func (f Func1In1Out[I1, O1]) CaptureI1(x *I1) func(i1 I1) O1 {
+
+func (f Func1In1Out[I1, O1]) WithCaptureI1(x *I1) Func1In1Out[I1, O1] {
 	f.i1Hook = func(t I1) {
 		*x = t
 	}
-	return f.Build()
+	return f
+}
+func (f Func1In1Out[I1, O1]) CaptureI1(x *I1) func(i1 I1) O1 {
+	return f.WithCaptureI1(x).Build()
 }
 
 func (f Func1In1Out[I1, O1]) CheckIsCalled(isCalled *bool) func(i1 I1) O1 {
@@ -26,18 +30,24 @@ func (f Func1In1Out[I1, O1]) CheckIsCalled(isCalled *bool) func(i1 I1) O1 {
 	}
 	return f.Build()
 }
-func (f Func1In1Out[I1, O1]) CaptureAllI1(x *[]I1) func(i1 I1) O1 {
+
+func (f Func1In1Out[I1, O1]) WithCaptureAllI1(x *[]I1) Func1In1Out[I1, O1] {
 	f.i1Hook = func(t I1) {
 		*x = append(*x, t)
 	}
-	return f.Build()
+	return f
 }
+func (f Func1In1Out[I1, O1]) CaptureAllI1(x *[]I1) func(i1 I1) O1 {
+	return f.WithCaptureAllI1(x).Build()
+}
+
 func (f Func1In1Out[I1, O1]) ReturnO1(x O1) func(i1 I1) O1 {
 	f.o1 = func() O1 {
 		return x
 	}
 	return f.Build()
 }
+
 func (f Func1In1Out[I1, O1]) ReturnAllO1(xs []O1) func(i1 I1) O1 {
 	results := make([]O1, len(xs))
 	copy(results, xs)
