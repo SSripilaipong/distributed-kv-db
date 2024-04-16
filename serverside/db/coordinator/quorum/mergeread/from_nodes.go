@@ -25,6 +25,6 @@ func composeFromNodes[Key, Data, Node any](
 ) func(ctx context.Context, nodes []Node, key Key) rslt.Of[Data] {
 
 	return tuples.ExplodeFn3(fn.Compose(
-		rslt.Fmap(slc.ReduceFn[[]Data](merge)), tuples.Fn3(qRead),
+		rslt.FmapPartial(slc.ReduceFn[[]Data](merge)), tuples.Fn3(qRead),
 	))
 }
