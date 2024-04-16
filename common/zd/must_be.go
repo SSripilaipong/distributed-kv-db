@@ -8,7 +8,7 @@ import (
 func MustBeMoreThan(m int) func(n int) rslt.Of[int] {
 	return func(n int) rslt.Of[int] {
 		if n <= m {
-			return rslt.Error[int](fmt.Errorf("n must be more than 0, got %d", n))
+			return rslt.Error[int](fmt.Errorf("n must be more than %d, got %d", m, n))
 		}
 		return rslt.Value(n)
 	}
