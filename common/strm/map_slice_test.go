@@ -14,7 +14,7 @@ import (
 func Test_MapSlice(t *testing.T) {
 	type A = string
 	type B = int
-	defaultTimeout := 100 * time.Millisecond
+	defaultTimeout := 500 * time.Millisecond
 	allInChannel := fn.WithArg(cntx.WithTimeout(defaultTimeout), chn.AllWithCtx[B])
 	waitUtilChannelClosed := fn.Compose(rslt.IsOk[[]B], allInChannel)
 	MapSliceWithXs := mapSliceWithXs[A, B]

@@ -1,6 +1,8 @@
 package chn
 
-import "sync"
+import (
+	"sync"
+)
 
 func CloseAfterWaitGroup[T any](wg *sync.WaitGroup, ch chan<- T) {
 	wg.Wait()

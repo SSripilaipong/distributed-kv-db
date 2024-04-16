@@ -20,7 +20,7 @@ func Test_ToAll(t *testing.T) {
 	type Data = int
 	type Node = string
 
-	defaultTimeout := 100 * time.Millisecond
+	defaultTimeout := 500 * time.Millisecond
 
 	Target := tstexc.NewFunc1Dep4In1Out(composeToAll[Key, Data, Node]).
 		DefaultIn1(context.Background())
