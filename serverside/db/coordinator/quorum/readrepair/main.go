@@ -7,14 +7,13 @@ import (
 	"distributed-kv-db/serverside/db/coordinator/peer/discovery"
 	peerRead "distributed-kv-db/serverside/db/coordinator/peer/read"
 	"distributed-kv-db/serverside/db/coordinator/quorum/read"
-	"distributed-kv-db/serverside/db/coordinator/quorum/readlatest"
 	"distributed-kv-db/serverside/db/coordinator/quorum/write"
 	"distributed-kv-db/serverside/db/data/temporal"
 )
 
 func New[Key any, Data temporal.Hashable](nReplicas uint, discoverNodes discovery.Func[Key, peerRead.ReadableNode[Key, Data]]) read.Func[Key, Data] {
 	return newFunc[Key, Data](
-		readlatest.New[Key, Data](nil),
+		nil,
 		write.New(discoverNodes),
 	)
 }
