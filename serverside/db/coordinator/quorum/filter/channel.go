@@ -7,10 +7,10 @@ import (
 	"distributed-kv-db/common/zd"
 )
 
-func ChannelToSlice[T any](n int) func(<-chan T) rslt.Of[[]T] {
+func ChannelToSlice[T any](n uint) func(<-chan T) rslt.Of[[]T] {
 	filter := fn.Compose(chn.FirstNFunc[T], numberOfQuorum)
 	filterOrError := fn.Compose(rslt.Fmap(filter), zd.MustBeMoreThan(0))
-	return rslt.MapOfFuncPartial(filterOrError(n))
+	return rslt.MapOfFuncPartial(filterOrError(int(n)))
 }
 
 var numberOfQuorum = fn.Compose(zd.Successor, zd.Half)

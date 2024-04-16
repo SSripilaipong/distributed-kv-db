@@ -4,16 +4,21 @@ import (
 	"context"
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
+	peerRead "distributed-kv-db/serverside/db/coordinator/peer/read"
+	quorumMergeRead "distributed-kv-db/serverside/db/coordinator/quorum/mergeread"
 )
 
-func FromNodes[Key any, Data any, Node any](
-	qMergeRead func(ctx context.Context, nodes []Node, key Key) rslt.Of[Data],
-	qBlindWrite func(ctx context.Context, nodes []Node, key Key, data Data) error,
+func FromNodes[Key, Data any, Node peerRead.ReadableNode[Key, Data]](
+	nReplicas uint,
+	merge func(x Data, y Data) Data,
 ) func(context.Context, []Node, Key) rslt.Of[Data] {
-	return composeFromNodes[Key, Data, Node](qMergeRead, qBlindWrite) // TODO inject real functions
+	return composeFromNodes[Key, Data, Node](
+		quorumMergeRead.FromNodes[Key, Data, Node](nReplicas, merge),
+		nil, // TODO inject real functions
+	)
 }
 
-func composeFromNodes[Key any, Data any, Node any](
+func composeFromNodes[Key, Data, Node any](
 	qMergeRead func(ctx context.Context, nodes []Node, key Key) rslt.Of[Data],
 	qBlindWrite func(ctx context.Context, nodes []Node, key Key, data Data) error,
 ) func(context.Context, []Node, Key) rslt.Of[Data] {

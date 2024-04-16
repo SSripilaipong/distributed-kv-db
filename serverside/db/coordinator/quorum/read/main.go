@@ -10,7 +10,7 @@ import (
 )
 
 func NodesToDataSlice[Key, Data any, Node peerRead.ReadableNode[Key, Data]](
-	nReplicas int, discoverNodes discovery.Func[Key, Node],
+	nReplicas uint, discoverNodes discovery.Func[Key, Node],
 ) func(ctx context.Context, key Key) rslt.Of[[]Data] {
 	return composeNodesToDataSlice[Key, Data, Node](
 		quorumFilter.ChannelToSlice[Data](nReplicas), peerRead.NodesDataToChannel[Key, Data, Node], discoverNodes,
