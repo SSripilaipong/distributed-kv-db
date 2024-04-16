@@ -1,14 +1,6 @@
 package temporal
 
-type Hashable interface {
-	data
-	hashable
-}
-
-type hashable interface {
-	Hash() int
-}
-
-type data interface {
+type Data interface {
 	Newness() int
+	Hash() int
 }

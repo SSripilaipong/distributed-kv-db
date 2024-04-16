@@ -1,22 +1,22 @@
 package temporal
 
-type hashableDataMock struct {
+type dataMock struct {
 	newness int
 	hash    int
 }
 
-func (d hashableDataMock) Newness() int {
+func (d dataMock) Newness() int {
 	return d.newness
 }
 
-func (d hashableDataMock) Hash() int {
+func (d dataMock) Hash() int {
 	return d.hash
 }
 
-func orderableDataWithNewness(newness int) hashableDataMock {
-	return hashableDataMock{newness: newness}
+func dataMockWithNewness(newness int) dataMock {
+	return dataMock{newness: newness}
 }
 
-func orderableDataWithNewnessAndHash(newness int, hash int) hashableDataMock {
-	return hashableDataMock{newness: newness, hash: hash}
+func dataMockWithNewnessAndHash(newness int, hash int) dataMock {
+	return dataMock{newness: newness, hash: hash}
 }

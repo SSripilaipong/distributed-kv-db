@@ -16,4 +16,4 @@ func (d orderableDataAdapter) Newness() int {
 	panic("implement me")
 }
 
-var _ temporal.Hashable = orderableDataAdapter{}
+var _ temporal.Data = orderableDataAdapter{}

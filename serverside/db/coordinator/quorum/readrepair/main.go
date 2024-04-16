@@ -11,7 +11,7 @@ import (
 	"distributed-kv-db/serverside/db/data/temporal"
 )
 
-func New[Key any, Data temporal.Hashable](nReplicas uint, discoverNodes discovery.Func[Key, peerRead.ReadableNode[Key, Data]]) read.Func[Key, Data] {
+func New[Key any, Data temporal.Data](nReplicas uint, discoverNodes discovery.Func[Key, peerRead.ReadableNode[Key, Data]]) read.Func[Key, Data] {
 	return newFunc[Key, Data](
 		nil,
 		write.New(discoverNodes),
