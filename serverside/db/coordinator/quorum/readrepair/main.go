@@ -14,7 +14,7 @@ import (
 
 func New[Key any, Data temporal.Hashable](nReplicas uint, discoverNodes discovery.Func[Key, peerRead.ReadableNode[Key, Data]]) read.Func[Key, Data] {
 	return newFunc[Key, Data](
-		readlatest.New[Key, Data](read.NodesToDataSlice(nReplicas, discoverNodes)),
+		readlatest.New[Key, Data](nil),
 		write.New(discoverNodes),
 	)
 }
