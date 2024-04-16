@@ -4,12 +4,11 @@ import (
 	"context"
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/rslt"
-	peerRead "distributed-kv-db/serverside/db/coordinator/peer/read"
 	quorumBlindWrite "distributed-kv-db/serverside/db/coordinator/quorum/blindwrite"
 	quorumMergeRead "distributed-kv-db/serverside/db/coordinator/quorum/mergeread"
 )
 
-func FromNodes[Key, Data any, Node peerRead.ReadableNode[Key, Data]](
+func FromNodes[Key, Data any, Node ReadWritableNode[Key, Data]](
 	nReplicas uint,
 	merge func(x Data, y Data) Data,
 ) func(context.Context, []Node, Key) rslt.Of[Data] {

@@ -28,9 +28,9 @@ func Test_ToNodes(t *testing.T) {
 	WithKey := Target.WithIn3
 	WithData := Target.WithIn4
 	PBlindWriteCaptureContext := PBlindWrite.CaptureI1
-	PBlindWriteCaptureKey := PBlindWrite.CaptureI2
-	PBlindWriteCaptureData := PBlindWrite.CaptureI3
-	PBlindWriteCaptureNodes := PBlindWrite.CaptureI4
+	PBlindWriteCaptureNodes := PBlindWrite.CaptureI2
+	PBlindWriteCaptureKey := PBlindWrite.CaptureI3
+	PBlindWriteCaptureData := PBlindWrite.CaptureI4
 	PBlindWriteWithResult := PBlindWrite.ReturnO1
 	QFilterCaptureChannel := QFilter.CaptureI1
 	QFilterWithResult := QFilter.ReturnO1

@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func Test_ToAll(t *testing.T) {
+func Test_ToNodes(t *testing.T) {
 	type Key = int
 	type Data = int
 	type Node = string
@@ -26,9 +26,9 @@ func Test_ToAll(t *testing.T) {
 		DefaultIn1(context.Background())
 	WithWriteFunc := Target.WithDep1
 	WithContext := Target.WithIn1
-	WithKey := Target.WithIn2
-	WithData := Target.WithIn3
-	WithNodes := Target.WithIn4
+	WithNodes := Target.WithIn2
+	WithKey := Target.WithIn3
+	WithData := Target.WithIn4
 
 	WriteFunc := tstmck.NewFunc4In1OutLike(Target.D1)
 	WriteFuncCaptureAllContext := WriteFunc.CaptureAllI1
