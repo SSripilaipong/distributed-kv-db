@@ -8,9 +8,7 @@ import (
 )
 
 func ChannelToSlice[T any](n uint) func(<-chan T) rslt.Of[[]T] {
-	filter := fn.Compose(chn.FirstNFunc[T], numberOfQuorum)
+	filter := fn.Compose(chn.FirstNFunc[T], nToQuorum)
 	filterOrError := fn.Compose(rslt.Fmap(filter), zd.MustBeMoreThan(0))
 	return rslt.MapOfFuncPartial(filterOrError(int(n)))
 }
-
-var numberOfQuorum = fn.Compose(zd.Successor, zd.Half)

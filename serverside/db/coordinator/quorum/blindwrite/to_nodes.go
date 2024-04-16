@@ -5,12 +5,13 @@ import (
 	"distributed-kv-db/common/fn"
 	"distributed-kv-db/common/tuples"
 	peerBlindWrite "distributed-kv-db/serverside/db/coordinator/peer/blindwrite"
+	quorumFilter "distributed-kv-db/serverside/db/coordinator/quorum/filter"
 )
 
 func ToNodes[Key, Data any, Node peerBlindWrite.WritableNode[Key, Data]](nReplicas uint) func(ctx context.Context, nodes []Node, key Key, data Data) error {
 	return composeToNodes[Key, Data, Node](
-		nil, // TODO inject
-		peerBlindWrite.ToNodes[Key, Data, Node](), // TODO inject
+		quorumFilter.ErrorChannel(nReplicas),
+		peerBlindWrite.ToNodes[Key, Data, Node](),
 	)
 }
 
